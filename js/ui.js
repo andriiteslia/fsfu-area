@@ -259,7 +259,7 @@ function renderResultCard(item) {
       <div class="result-card-header">
         <div class="result-card-header-info">
           <h3>${escHtml(title)}</h3>
-          <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
+          <p>${escHtml(location)} &nbsp;·&nbsp; ${escHtml(dateDisplay)}</p>
         </div>
       </div>
       <div class="result-table-wrap">
@@ -303,7 +303,7 @@ function openDetailPage(item) {
         <button class="detail-back" aria-label="Назад">← Назад</button>
         <div class="detail-header-info">
           <h2>${escHtml(title)}</h2>
-          <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
+          <p>${escHtml(location)} &nbsp;·&nbsp; ${escHtml(dateDisplay)}</p>
         </div>
       </div>
       <div class="detail-body">
