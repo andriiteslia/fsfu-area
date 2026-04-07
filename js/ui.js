@@ -117,11 +117,10 @@ function renderRichTable(result, divSet, previewCount) {
   const dataRows   = rows.filter(r => !r.h);
   const showRows   = previewCount != null ? dataRows.slice(0, previewCount) : dataRows;
 
-  const renderCell = (cell, isHeader, headerRowIdx) => {
-    const tag       = isHeader ? 'th' : 'td';
-    const endCol    = cell.col + cell.cs;
+  const renderCell = (cell, isHeader) => {
+    const tag        = isHeader ? 'th' : 'td';
+    const endCol     = cell.col + cell.cs;
     const hasDivider = divSet.has(endCol);
-    const isSub     = isHeader && headerRowIdx > 0;
 
     const style = [];
     if (cell.bg) style.push('background-color:' + cell.bg);
@@ -129,16 +128,12 @@ function renderRichTable(result, divSet, previewCount) {
     if (cell.b && !isHeader) style.push('font-weight:700');
     if (cell.a === 'center') style.push('text-align:center');
     if (cell.a === 'right')  style.push('text-align:right');
-
-    const classes = [];
-    if (hasDivider) classes.push('col-divider');
-    if (isSub)      classes.push('th-sub');
+    if (hasDivider)          style.push('border-right:1px solid #005BBB');
 
     const attrs = [];
     if (cell.cs > 1) attrs.push('colspan="' + cell.cs + '"');
     if (cell.rs > 1) attrs.push('rowspan="' + cell.rs + '"');
-    if (style.length)   attrs.push('style="' + style.join(';') + '"');
-    if (classes.length) attrs.push('class="' + classes.join(' ') + '"');
+    if (style.length) attrs.push('style="' + style.join(';') + '"');
 
     // Place badge: column 0 of data rows
     let content;
@@ -153,12 +148,12 @@ function renderRichTable(result, divSet, previewCount) {
     return '<' + tag + attrStr + '>' + content + '</' + tag + '>';
   };
 
-  const thead = headerRows.map((row, rowIdx) =>
-    '<tr>' + (row.c || []).map(cell => renderCell(cell, true, rowIdx)).join('') + '</tr>'
+  const thead = headerRows.map(row =>
+    '<tr>' + (row.c || []).map(cell => renderCell(cell, true)).join('') + '</tr>'
   ).join('');
 
   const tbody = showRows.map(row =>
-    '<tr>' + (row.c || []).map(cell => renderCell(cell, false, 0)).join('') + '</tr>'
+    '<tr>' + (row.c || []).map(cell => renderCell(cell, false)).join('') + '</tr>'
   ).join('');
 
   return { thead, tbody, totalDataRows: dataRows.length };
@@ -245,7 +240,7 @@ function buildThead(result, dividers) {
  * Renders a single result card (preview: first 4 rows + "Показати детальніше").
  */
 function renderResultCard(item) {
-  const { id, title, dateDisplay, location, status, type, result } = item;
+  const { id, title, dateDisplay, location, type, result } = item;
   const divSet = parseDividers(item.dividers);
 
   let tableHtml, hasMore, totalRows;
@@ -284,7 +279,6 @@ function renderResultCard(item) {
     <div class="result-card" data-type="${escHtml(type)}" data-card-id="${escHtml(id)}">
       <div class="result-card-header">
         <div class="result-card-header-info">
-          <span class="badge ${statusBadgeClass(status)}">${escHtml(status)}</span>
           <h3>${escHtml(title)}</h3>
           <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
         </div>
@@ -303,7 +297,7 @@ function renderResultCard(item) {
  * Opens a full-screen detail view for one competition.
  */
 function openDetailPage(item) {
-  const { title, dateDisplay, location, status, result } = item;
+  const { title, dateDisplay, location, result } = item;
   const divSet = parseDividers(item.dividers);
 
   let tableHtml;
@@ -329,7 +323,6 @@ function openDetailPage(item) {
       <div class="detail-header">
         <button class="detail-back" aria-label="Назад">← Назад</button>
         <div class="detail-header-info">
-          <span class="badge ${statusBadgeClass(status)}">${escHtml(status)}</span>
           <h2>${escHtml(title)}</h2>
           <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
         </div>
