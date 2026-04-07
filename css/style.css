@@ -49,8 +49,8 @@
   --pad-desktop: 40px;
 
   /* Shape */
-  --radius:    4px;
-  --radius-sm:  4px;
+  --radius:    8px;
+  --radius-sm:  8px;
 
   /* Shadows */
   --shadow:    0 2px 16px rgba(0, 45, 110, 0.10);
@@ -170,125 +170,68 @@ button {
    — Desktop: sticky top tab-bar (below header)
    ════════════════════════════════════════════════════════ */
 
+/* ════════════════════════════════════════════════════════
+   BOTTOM NAV  —  Floating pill, always at bottom
+   ════════════════════════════════════════════════════════ */
+
 .bottom-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: calc(var(--nav-h-mobile) + var(--tg-safe-bottom));
-  padding-bottom: var(--tg-safe-bottom);
+  bottom: calc(20px + var(--tg-safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);   /* 12px each side */
+  max-width: 560px;
+  height: 64px;
   z-index: 200;
   display: flex;
   background: var(--c-white);
-  border-top: 1.5px solid var(--c-border);
-  box-shadow: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 24px rgba(0, 45, 110, 0.14);
+  border: 1px solid var(--c-border);
+  overflow: hidden;
+  padding: 6px;
+  gap: 4px;
 }
 
-@media (min-width: 1024px) {
-  .bottom-nav {
-    position: sticky;
-    top: var(--header-h);
-    bottom: auto;
-    left: 0; right: 0;
-    transform: none;
-    width: 100%;
-    height: var(--nav-h-desktop);
-    order: 2;
-    border-top: none;
-    border-bottom: 2px solid var(--c-border);
-    box-shadow: none;
-    padding: 0;
-    justify-content: stretch;
-    gap: 0;
-  }
-
-  .nav-btn {
-    flex: none;
-    flex-direction: row;
-    gap: 8px;
-    padding: 0 22px;
-    height: 100%;
-    border-radius: 0;
-  }
-}
-
-/* Nav inner wrapper — mirrors .header-inner grid centering */
 .nav-inner {
   display: flex;
   align-items: stretch;
   width: 100%;
   height: 100%;
+  gap: 4px;
 }
 
-@media (min-width: 1024px) {
-  .nav-inner {
-    max-width: var(--max-w);
-    margin: 0 auto;
-    padding: 0 var(--pad-desktop);
-    justify-content: flex-start;
-  }
-}
-
-/* Nav button — mobile */
 .nav-btn {
   flex: 1;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 3px; padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 8px;
   color: var(--c-text-sub);
-  transition: color var(--t-fast);
+  border-radius: 50px;
+  transition: background var(--t-fast), color var(--t-fast);
   position: relative;
 }
 
-.nav-btn::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 18%; right: 18%;
-  height: 2.5px;
-  background: var(--c-blue-main);
-  border-radius: 0 0 4px 4px;
-  transform: scaleX(0);
-  transition: transform var(--t-fast);
+.nav-btn.active {
+  background: var(--c-blue-pale);
+  color: var(--c-blue-main);
 }
-
-.nav-btn.active          { color: var(--c-blue-main); }
-.nav-btn.active::after   { transform: scaleX(1); }
 
 .nav-icon {
-  font-size: 22px; line-height: 1;
-  transition: transform var(--t-fast);
+  font-size: 20px;
+  line-height: 1;
 }
-.nav-btn.active .nav-icon { transform: translateY(-2px); }
 
 .nav-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
-/* Nav button — desktop overrides */
-@media (min-width: 1024px) {
-  .nav-btn {
-    flex: none;
-    flex-direction: row;
-    gap: 8px;
-    padding: 0 22px;
-    height: 100%;
-    border-radius: 0;
-  }
 
-  .nav-btn::after {
-    top: auto; bottom: 0;
-    left: 12%; right: 12%;
-    border-radius: 4px 4px 0 0;
-  }
-
-  .nav-icon            { font-size: 18px; }
-  .nav-btn.active .nav-icon { transform: none; }
-
-  .nav-label {
-    font-size: 13px; font-weight: 700; letter-spacing: 0.2px;
-  }
-}
 
 /* ════════════════════════════════════════════════════════
    MAIN CONTENT
@@ -299,15 +242,15 @@ button {
   order: 3;
   overflow-y: auto;
   overflow-x: hidden;
-  /* Room for fixed bottom nav + safe area */
-  padding-bottom: calc(var(--nav-h-mobile) + var(--tg-safe-bottom) + 12px);
+  /* Room for floating pill nav: 64px height + 20px bottom + 12px gap */
+  padding-bottom: calc(64px + 20px + var(--tg-safe-bottom) + 16px);
   -webkit-overflow-scrolling: touch;
 }
 
 @media (min-width: 1024px) {
   .main {
-    padding-bottom: 48px;
-    overflow: visible;  /* let page scroll naturally on desktop */
+    padding-bottom: calc(64px + 20px + 16px);
+    overflow: visible;
   }
 }
 
