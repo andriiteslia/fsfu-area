@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#002D6E" />
+  <title>ФРСУ · AREA</title>
+
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <img
+        src="assets/imgs/fsfu_logo.png"
+        alt="ФРСУ"
+        class="header-logo"
+        onerror="this.style.display='none'; document.querySelector('.header-logo-fallback').style.display='flex'"
+      />
+      <div class="header-logo-fallback" style="display:none">🎣</div>
+      <div class="header-title">
+        <span class="header-title-main">ФРСУ</span>
+        <span class="header-title-sub">AREA · Ловля форелі в озерах</span>
+      </div>
+      <span class="header-flag" aria-hidden="true">🇺🇦</span>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main id="main" class="main">
+
+    <!-- RESULTS TAB -->
+    <section id="tab-results" class="tab active" aria-label="Результати">
+
+      <!-- Federation branded hero -->
+      <div class="results-hero">
+        <img
+          src="assets/imgs/fsfu_logo.png"
+          alt="ФРСУ"
+          class="results-hero-logo"
+          onerror="this.style.display='none'"
+        />
+        <div class="results-hero-text">
+          <span class="results-hero-title">Федерація риболовного спорту України</span>
+          <span class="results-hero-sub">AREA · Ловля форелі в озерах · Офіційні результати</span>
+        </div>
+      </div>
+
+      <!-- Filter chips -->
+      <div class="chips-wrap" id="result-chips" role="group" aria-label="Фільтр по типу змагань">
+        <button class="chip active" data-filter="all">Усі</button>
+        <button class="chip" data-filter="championship">Чемпіонат України</button>
+        <button class="chip" data-filter="cup">Кубок України</button>
+      </div>
+
+      <!-- Results list renders here -->
+      <div id="results-list" class="results-list"></div>
+
+    </section>
+
+    <!-- CALENDAR TAB -->
+    <section id="tab-calendar" class="tab" aria-label="Календар">
+
+      <div class="page-hero">
+        <p class="page-hero-label">📅 Майбутні події</p>
+        <h2 class="page-hero-title">Календар<br>змагань 2025–2026</h2>
+        <p class="page-hero-sub">Афіші, дати відкриття реєстрації та запис</p>
+      </div>
+
+      <!-- Calendar list renders here -->
+      <div id="calendar-list" class="calendar-list"></div>
+
+    </section>
+
+    <!-- ABOUT TAB -->
+    <section id="tab-about" class="tab" aria-label="Про нас">
+
+      <div class="about-hero">
+        <img
+          src="assets/imgs/fsfu_logo.png"
+          alt="ФРСУ логотип"
+          class="about-logo"
+          onerror="this.style.display='none'"
+        />
+        <h2 class="about-title">Федерація риболовного спорту України</h2>
+        <p class="about-desc">Всеукраїнська громадська організація, що розвиває риболовний спорт в Україні з 2002 року.</p>
+      </div>
+
+      <div id="about-content" class="about-content"></div>
+
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" role="tablist">
+    <div class="nav-inner">
+      <button class="nav-btn active" data-tab="results" role="tab" aria-selected="true" aria-controls="tab-results">
+        <span class="nav-icon" aria-hidden="true">🏆</span>
+        <span class="nav-label">Результати</span>
+      </button>
+      <button class="nav-btn" data-tab="calendar" role="tab" aria-selected="false" aria-controls="tab-calendar">
+        <span class="nav-icon" aria-hidden="true">📅</span>
+        <span class="nav-label">Календар</span>
+      </button>
+      <button class="nav-btn" data-tab="about" role="tab" aria-selected="false" aria-controls="tab-about">
+        <span class="nav-icon" aria-hidden="true">ℹ️</span>
+        <span class="nav-label">Про нас</span>
+      </button>
+    </div>
+  </nav>
+
+</div>
+
+<!-- Scripts (order matters) -->
+<script src="js/data.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
