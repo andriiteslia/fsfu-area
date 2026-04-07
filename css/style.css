@@ -786,10 +786,19 @@ button {
   background: var(--c-blue-pale); color: var(--c-blue-main);
 }
 
-/* Column dividers — applied via .col-divider class */
+/* Column dividers */
 .result-table th.col-divider,
 .result-table td.col-divider {
   border-right: 2px solid var(--c-blue-main) !important;
+  position: relative;
+}
+
+/* Group header — visually distinct */
+.result-table thead .th-group {
+  text-align: center;
+  background: var(--c-blue-pale) !important;
+  color: var(--c-blue-main);
+  font-weight: 800;
 }
 
 /* ── Show more button ──────────────────────────────────── */
