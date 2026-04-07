@@ -83,29 +83,35 @@ function statusBadgeClass(status) {
 
 /* ── Results ─────────────────────────────────────────────── */
 
+const PREVIEW_ROWS = 4;
+
 /**
- * Renders a single result card.
- * @param {Object} item - { id, title, dateDisplay, location, status, type, result: { headers, rows } }
+ * Renders a single result card (preview: first 4 rows + "Показати детальніше").
  */
 function renderResultCard(item) {
-  const { title, dateDisplay, location, status, type, result } = item;
+  const { id, title, dateDisplay, location, status, type, result } = item;
 
-  // Render all cells as plain columns — no merging
-  const rows = (result?.rows || []).map(row => `
+  const allRows  = result?.rows || [];
+  const preview  = allRows.slice(0, PREVIEW_ROWS);
+  const hasMore  = allRows.length > PREVIEW_ROWS;
+
+  const headers  = result?.headers || [];
+  const thCells  = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
+
+  const renderRow = row => `
     <tr>
       <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
-      ${row.cells.map(cell =>
-        `<td>${escHtml(String(cell ?? ''))}</td>`
-      ).join('')}
-    </tr>
-  `).join('');
+      ${row.cells.map(cell => `<td>${escHtml(String(cell ?? ''))}</td>`).join('')}
+    </tr>`;
 
-  // All headers rendered as-is
-  const headers = result?.headers || [];
-  const thCells = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
+  const moreBtn = hasMore ? `
+    <button class="btn-show-more" data-card-id="${escHtml(id)}">
+      Показати детальніше
+      <span class="btn-show-more-count">${allRows.length - PREVIEW_ROWS} ще</span>
+    </button>` : '';
 
   return `
-    <div class="result-card" data-type="${escHtml(type)}">
+    <div class="result-card" data-type="${escHtml(type)}" data-card-id="${escHtml(id)}">
       <div class="result-card-header">
         <div class="result-card-header-info">
           <span class="badge ${statusBadgeClass(status)}">${escHtml(status)}</span>
@@ -115,10 +121,91 @@ function renderResultCard(item) {
       </div>
       <table class="result-table" aria-label="Результати ${escHtml(title)}">
         <thead><tr>${thCells}</tr></thead>
-        <tbody>${rows}</tbody>
+        <tbody>${preview.map(renderRow).join('')}</tbody>
       </table>
+      ${moreBtn}
     </div>
   `;
+}
+
+/* ── Detail page (full results) ──────────────────────────── */
+
+/**
+ * Opens a full-screen detail view for one competition.
+ */
+function openDetailPage(item) {
+  const { title, dateDisplay, location, status, result } = item;
+
+  const allRows = result?.rows || [];
+  const headers = result?.headers || [];
+  const thCells = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
+  const rows    = allRows.map(row => `
+    <tr>
+      <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
+      ${row.cells.map(cell => `<td>${escHtml(String(cell ?? ''))}</td>`).join('')}
+    </tr>`).join('');
+
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'detail-overlay';
+  overlay.innerHTML = `
+    <div class="detail-page">
+      <div class="detail-header">
+        <button class="detail-back" aria-label="Назад">← Назад</button>
+        <div class="detail-header-info">
+          <span class="badge ${statusBadgeClass(status)}">${escHtml(status)}</span>
+          <h2>${escHtml(title)}</h2>
+          <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
+        </div>
+      </div>
+      <div class="detail-body">
+        <table class="result-table detail-table">
+          <thead><tr>${thCells}</tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Close on back button
+  overlay.querySelector('.detail-back').addEventListener('click', () => {
+    overlay.classList.add('detail-overlay--closing');
+    overlay.addEventListener('animationend', () => overlay.remove(), { once: true });
+  });
+
+  // Telegram back button support
+  const tg = window.Telegram?.WebApp;
+  if (tg?.BackButton) {
+    tg.BackButton.show();
+    tg.BackButton.onClick(() => {
+      overlay.querySelector('.detail-back').click();
+      tg.BackButton.hide();
+    });
+  }
+
+  document.body.appendChild(overlay);
+  // Row highlight inside detail page
+  overlay.querySelector('tbody').addEventListener('click', e => {
+    const row = e.target.closest('tr');
+    if (!row) return;
+    const wasActive = row.classList.contains('active');
+    overlay.querySelectorAll('tbody tr.active').forEach(r => r.classList.remove('active'));
+    if (!wasActive) row.classList.add('active');
+  });
+}
+
+/**
+ * Attaches "Показати детальніше" click handlers.
+ * Call after renderResults().
+ */
+function initDetailButtons(items) {
+  document.querySelectorAll('.btn-show-more').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id   = btn.dataset.cardId;
+      const item = items.find(i => i.id === id);
+      if (item) openDetailPage(item);
+    });
+  });
 }
 
 /**
@@ -142,6 +229,7 @@ function renderResults(items, activeFilter = 'all') {
   }
 
   container.innerHTML = filtered.map(renderResultCard).join('');
+  initDetailButtons(items);
 }
 
 /* ── Calendar ─────────────────────────────────────────────── */
