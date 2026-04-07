@@ -176,8 +176,6 @@ function buildThead(result, dividers) {
 
 /* ── Results ─────────────────────────────────────────────── */
 
-const PREVIEW_ROWS = 4;
-
 /**
  * Renders a single result card (preview: first 4 rows + "Показати детальніше").
  */
