@@ -45,12 +45,8 @@
         </div>
       </div>
 
-      <!-- Filter chips -->
-      <div class="chips-wrap" id="result-chips" role="group" aria-label="Фільтр по типу змагань">
-        <button class="chip active" data-filter="all">Усі</button>
-        <button class="chip" data-filter="championship">Чемпіонат України</button>
-        <button class="chip" data-filter="cup">Кубок України</button>
-      </div>
+      <!-- Filter chips — rendered dynamically from config tag_title/tag_order -->
+      <div class="chips-wrap" id="result-chips" role="group" aria-label="Фільтр по тегах"></div>
 
       <!-- Results list renders here -->
       <div id="results-list" class="results-list"></div>
@@ -100,6 +96,7 @@
 
 <!-- Scripts (order matters) -->
 <script src="js/data.js"></script>
+<script src="js/api.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/app.js"></script>
 </body>
