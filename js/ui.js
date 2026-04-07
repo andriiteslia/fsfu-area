@@ -219,7 +219,7 @@ function buildThead(result, dividers) {
 /* ── Results ─────────────────────────────────────────────── */
 
 /**
- * Renders a single result card (preview: first 4 rows + "Показати детальніше").
+ * Renders a single result card (preview: first 4 rows + "Переглянути детальніше →").
  */
 function renderResultCard(item) {
   const { id, title, dateDisplay, location, type, result } = item;
@@ -250,8 +250,8 @@ function renderResultCard(item) {
 
   const moreBtn = hasMore ? `
     <button class="btn-show-more" data-card-id="${escHtml(id)}">
-      Показати детальніше
-      <span class="btn-show-more-count">${totalRows - PREVIEW_ROWS} ще</span>
+      Переглянути детальніше →
+      <span class="btn-show-more-count">ще ${totalRows - PREVIEW_ROWS}</span>
     </button>` : '';
 
   return `
@@ -342,7 +342,7 @@ function openDetailPage(item) {
 }
 
 /**
- * Attaches "Показати детальніше" click handlers.
+ * Attaches "Переглянути детальніше →" click handlers.
  * Call after renderResults().
  */
 function initDetailButtons(items) {
