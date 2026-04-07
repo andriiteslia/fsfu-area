@@ -23,8 +23,7 @@ function initTelegram() {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
 
-    const FULLSCREEN_PAD = 108; // px — safe zone when fullscreen on mobile (status bar + TG nav)
-    const FULLSIZE_PAD   = 20;  // px — when already expanded / desktop
+    const FULLSCREEN_PAD = 100; // px — safe zone for TG fullscreen on mobile
 
     function setPad(px) {
       document.documentElement.style.setProperty('--app-top-pad', px + 'px');
@@ -47,15 +46,16 @@ function initTelegram() {
     }
 
     function applyByState() {
+      // Web/desktop — no padding needed, nav bar handles spacing
       if (!isMobileClient()) {
-        setPad(FULLSIZE_PAD);
+        setPad(0);
         return;
       }
       if (typeof tg.isFullscreen === 'boolean') {
-        setPad(tg.isFullscreen ? FULLSCREEN_PAD : FULLSIZE_PAD);
+        setPad(tg.isFullscreen ? FULLSCREEN_PAD : 0);
         return;
       }
-      setPad(isFullsizeNow() ? FULLSIZE_PAD : FULLSCREEN_PAD);
+      setPad(isFullsizeNow() ? 0 : FULLSCREEN_PAD);
     }
 
     function tryFullscreen() {
