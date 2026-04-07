@@ -19,18 +19,106 @@ const state = {
 
 /* ── Telegram WebApp ────────────────────────────────────── */
 function initTelegram() {
-  const tg = window.Telegram?.WebApp;
-  if (!tg) return;
+  try {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
 
-  tg.ready();
-  tg.expand();
+    const FULLSCREEN_PAD = 108; // px — safe zone when fullscreen on mobile (status bar + TG nav)
+    const FULLSIZE_PAD   = 20;  // px — when already expanded / desktop
 
-  // Match app header to Telegram's colour scheme
-  tg.setHeaderColor('#002D6E');
-  tg.setBackgroundColor('#F0F4FA');
+    function setPad(px) {
+      document.documentElement.style.setProperty('--app-top-pad', px + 'px');
+      document.body.classList.toggle('fullscreen-active', px >= FULLSCREEN_PAD);
+    }
 
-  // Show back button on Telegram's native header if needed
-  // tg.BackButton.show();
+    function isMobileClient() {
+      const p = tg && typeof tg.platform === 'string' ? tg.platform.toLowerCase() : '';
+      if (p.includes('android') || p.includes('ios')) return true;
+      const ua = (navigator.userAgent || '').toLowerCase();
+      return /iphone|ipad|ipod|android/.test(ua);
+    }
+
+    function isFullsizeNow() {
+      if (!isMobileClient()) return true;
+      const ih = window.innerHeight || 0;
+      const sh = window.screen?.availHeight || window.screen?.height || 0;
+      if (!ih || !sh) return false;
+      return (sh - ih) >= 80;
+    }
+
+    function applyByState() {
+      if (!isMobileClient()) {
+        setPad(FULLSIZE_PAD);
+        return;
+      }
+      if (typeof tg.isFullscreen === 'boolean') {
+        setPad(tg.isFullscreen ? FULLSCREEN_PAD : FULLSIZE_PAD);
+        return;
+      }
+      setPad(isFullsizeNow() ? FULLSIZE_PAD : FULLSCREEN_PAD);
+    }
+
+    function tryFullscreen() {
+      if (!tg || !isMobileClient()) return;
+      if (!isFullsizeNow()) return;
+      try {
+        if (typeof tg.requestFullscreen === 'function') {
+          tg.requestFullscreen();
+        } else if (typeof tg.expand === 'function') {
+          tg.expand();
+        }
+      } catch (e) {}
+    }
+
+    // Disable vertical swipes — prevents accidental app close
+    try {
+      if (typeof tg.disableVerticalSwipes === 'function') {
+        tg.disableVerticalSwipes();
+      }
+    } catch (e) {}
+
+    // Header colour
+    try {
+      if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#002D6E');
+      if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#EFF3FB');
+    } catch (e) {}
+
+    // Apply padding immediately based on current state
+    applyByState();
+
+    // Try fullscreen on mobile
+    if (isMobileClient()) tryFullscreen();
+
+    // Also try on first user interaction (TG sometimes needs gesture)
+    let triedOnInteraction = false;
+    function tryOnce() {
+      if (triedOnInteraction) return;
+      triedOnInteraction = true;
+      tryFullscreen();
+    }
+    ['touchstart', 'click'].forEach(evt =>
+      document.addEventListener(evt, tryOnce, { once: true, passive: true })
+    );
+
+    // Keep viewport height in sync
+    const updateViewport = () => {
+      const vh = tg.viewportStableHeight || window.innerHeight;
+      document.documentElement.style.setProperty('--tg-viewport-height', `${vh}px`);
+      document.documentElement.style.setProperty('--tg-viewport-stable-height', `${vh}px`);
+      applyByState();
+    };
+
+    updateViewport();
+    tg.onEvent('viewportChanged', updateViewport);
+
+    // Double expand — TG sometimes ignores the first call
+    try { tg.expand(); } catch (e) {}
+    setTimeout(() => { try { tg.expand(); } catch (e) {} }, 120);
+
+    console.log('[FSFU] Telegram WebApp initialized');
+  } catch (e) {
+    console.warn('[FSFU] Telegram not available:', e);
+  }
 }
 
 /* ── Tab navigation ─────────────────────────────────────── */
