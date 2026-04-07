@@ -719,26 +719,24 @@ button {
   .about-desc  { font-size: 13.5px; }
 }
 
-/* UA flag accent bar */
-.ua-bar {
-  height: 4px;
-  background: linear-gradient(90deg, var(--c-blue-main) 50%, var(--c-gold) 50%);
-  border-radius: 0 0 var(--radius) var(--radius);
-  margin-bottom: 20px;
-}
-
-/* About 2-col layout on desktop */
-.about-content {
+/* About 2-col layout */
+.about-cols {
   display: grid;
   grid-template-columns: 1fr;
+  gap: 0;
 }
 
 @media (min-width: 768px) {
-  .about-content {
+  .about-cols {
     grid-template-columns: 1fr 1fr;
     gap: 0 28px;
     align-items: start;
   }
+}
+
+.about-col-left,
+.about-col-right {
+  min-width: 0;
 }
 
 /* Info card */
