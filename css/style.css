@@ -533,9 +533,11 @@ button {
   padding: 3px 9px; border-radius: 50px; white-space: nowrap;
 }
 
-.badge-done     { background: #d4edda; color: var(--c-done); }
-.badge-upcoming { background: var(--c-blue-pale); color: var(--c-blue-main); }
-.badge-open     { background: var(--c-open-bg);   color: var(--c-open); }
+.badge-done        { background: #1E1E1E;  color: #fff; }
+.badge-ongoing     { background: #1351C1;  color: #fff; }
+.badge-reg-open    { background: #1A7A4A;  color: #fff; }
+.badge-reg-closed  { background: #B8860B;  color: #fff; }
+.badge-expected    { background: #5A6B8A;  color: #fff; }
 
 /* Results table */
 .result-table { width: 100%; border-collapse: collapse; flex: 1; }
@@ -559,7 +561,7 @@ button {
 .result-table td:last-child  { text-align: right; padding-right: 14px; }
 
 .result-table tbody tr {
-  border-bottom: 1px solid var(--c-border);
+  border-bottom: 1px solid #E8EEF8;
   transition: background var(--t-fast);
 }
 .result-table tbody tr:last-child { border-bottom: none; }
