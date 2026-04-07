@@ -498,8 +498,8 @@ button {
   align-items: start;
 }
 
-@media (min-width: 680px) {
-  .results-list { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+@media (min-width: 768px) {
+  .results-list { gap: 20px; }
 }
 
 /* Card */
