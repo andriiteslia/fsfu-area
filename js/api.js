@@ -16,7 +16,7 @@
 /* ── Config ─────────────────────────────────────────────── */
 
 const API_CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbypvxjJt5DwlnIeDtBvlc2xZvbbNtPPsuF7qLOnFvab1hGSt_LggvqG8Y6pI8YXGcCr/exec',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxtxfTGKmZ6_55_bVRaWvmwY8gty5arS58M1lpKgZPoUtqHN-Gigls-weAkZJlr_TBR/exec',
 
   CONFIG_SHEET_ID:   '10ZIbNLCBTmmC9BClB-Cj7IUjzCyus4rEV7KzQKsMNQs',
   CONFIG_SHEET_NAME: 'config_fsfu_area',
