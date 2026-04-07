@@ -128,6 +128,19 @@ function initTabs() {
   const main = document.getElementById('main');
 
   navBtns.forEach(btn => {
+    // Touch press micro-interaction for mobile
+    btn.addEventListener('touchstart', () => {
+      btn.classList.add('pressing');
+    }, { passive: true });
+
+    btn.addEventListener('touchend', () => {
+      setTimeout(() => btn.classList.remove('pressing'), 150);
+    }, { passive: true });
+
+    btn.addEventListener('touchcancel', () => {
+      btn.classList.remove('pressing');
+    }, { passive: true });
+
     btn.addEventListener('click', () => {
       const tabId = btn.dataset.tab;
       if (tabId === state.activeTab) return;
