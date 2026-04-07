@@ -548,20 +548,31 @@ button {
 /* Results table */
 .result-table { width: 100%; border-collapse: collapse; min-width: 320px; }
 
-.result-table thead tr { border-bottom: 1.5px solid var(--c-border); }
+.result-table thead tr { border-bottom: 1px solid var(--c-border); }
 
+/* All th — base */
 .result-table th {
   padding: 7px 10px;
-  text-align: left;
   font-family: 'Montserrat', sans-serif;
   font-size: 10px; font-weight: 700;
   color: var(--c-text-sub);
   text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
   border-right: 1px solid var(--c-border);
   vertical-align: middle;
+  text-align: center;
 }
 
-/* th with Sheets bg color — natural rendering, no uppercase override */
+/* Second thead row — sub-headers (Місце в зоні, Бали, К-ть риб) */
+.result-table thead tr:nth-child(2) th {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--c-text);
+  background: #F7F9FD;
+}
+
+/* th with Sheets bg color — use Sheets styling */
 .result-table th[style*="background-color"] {
   text-transform: none;
   letter-spacing: 0;
@@ -570,7 +581,8 @@ button {
   text-align: center;
 }
 
-.result-table th:last-child { border-right: none; }
+.result-table th:last-child,
+.result-table td:last-child { border-right: none; }
 
 .result-table th:first-child,
 .result-table td:first-child { padding-left: 14px; }
@@ -784,19 +796,9 @@ button {
   background: var(--c-blue-pale); color: var(--c-blue-main);
 }
 
-/* Column dividers */
-.result-table th.col-divider,
-.result-table td.col-divider {
-  border-right: 2px solid var(--c-blue-main) !important;
-  position: relative;
-}
-
-/* Group header — visually distinct */
-.result-table thead .th-group {
-  text-align: center;
-  background: var(--c-blue-pale) !important;
-  color: var(--c-blue-main);
-  font-weight: 800;
+/* Column dividers — box-shadow works with border-collapse, border-right does not */
+.result-table .col-divider {
+  box-shadow: inset -2px 0 0 0 var(--c-blue-main);
 }
 
 /* ── Show more button ──────────────────────────────────── */
