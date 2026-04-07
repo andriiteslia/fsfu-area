@@ -20,42 +20,95 @@ function escHtml(str) {
   return d.innerHTML;
 }
 
+/* ── Filter chips ─────────────────────────────────────────── */
+
+/**
+ * Builds filter chips dynamically from config items.
+ * Tags are deduplicated and sorted by tag_order.
+ * Returns the active filter value after render.
+ *
+ * @param {Array}    items        - config items (with tag_title, tag_order)
+ * @param {string}   activeFilter - currently active filter ('all' or tag_title)
+ * @param {Function} onChange     - callback(newFilter) when chip is clicked
+ */
+function renderFilterChips(items, activeFilter, onChange) {
+  const container = document.getElementById('result-chips');
+  if (!container) return;
+
+  // Build unique tags sorted by tag_order
+  const tagMap = new Map();
+  items.forEach(item => {
+    if (item.tag_title && !tagMap.has(item.tag_title)) {
+      tagMap.set(item.tag_title, item.tag_order ?? 99);
+    }
+  });
+
+  const tags = [...tagMap.entries()]
+    .sort((a, b) => a[1] - b[1])
+    .map(([title]) => title);
+
+  // Render: "Усі" + one chip per unique tag
+  const allActive = activeFilter === 'all' ? 'active' : '';
+  const chipsHtml = [
+    `<button class="chip ${allActive}" data-filter="all">Усі</button>`,
+    ...tags.map(tag => {
+      const isActive = activeFilter === tag ? 'active' : '';
+      return `<button class="chip ${isActive}" data-filter="${escHtml(tag)}">${escHtml(tag)}</button>`;
+    }),
+  ].join('');
+
+  container.innerHTML = chipsHtml;
+
+  // Attach click handlers
+  container.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      onChange(chip.dataset.filter);
+    });
+  });
+}
+
 /* ── Results ─────────────────────────────────────────────── */
 
 /**
- * Renders a single result card (one competition).
- * @param {Object} r - result object from data.js
- * @returns {string} HTML string
+ * Renders a single result card.
+ * @param {Object} item - { id, title, dateDisplay, location, status, type, result: { headers, rows } }
  */
-function renderResultCard(r) {
-  const rows = r.teams.map(t => `
+function renderResultCard(item) {
+  const { title, dateDisplay, location, status, type, result } = item;
+
+  const rows = (result?.rows || []).map(row => `
     <tr>
-      <td><span class="place ${placeClass(t.place)}">${t.place}</span></td>
-      <td>
-        <div class="athlete-name">${escHtml(t.name)}</div>
-        <div class="athlete-region">${escHtml(t.region)}</div>
-      </td>
-      <td><span class="score">${escHtml(t.score)}</span></td>
+      <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
+      ${row.cells.map((cell, i) => i === 0
+        ? `<td><div class="athlete-name">${escHtml(cell)}</div>
+               ${row.cells[1] ? `<div class="athlete-region">${escHtml(row.cells[1])}</div>` : ''}
+           </td>`
+        : i === 1 ? '' // region already rendered inside name cell
+        : `<td><span class="score">${escHtml(cell)}</span></td>`
+      ).join('')}
     </tr>
   `).join('');
 
+  const headers = result?.headers || ['#', 'Команда', 'Результат'];
+  // Build th list — skip index 1 (region, rendered inside name cell)
+  const thCells = headers
+    .filter((_, i) => i !== 1)
+    .map(h => `<th>${escHtml(h)}</th>`)
+    .join('');
+
   return `
-    <div class="result-card" data-type="${r.type}">
+    <div class="result-card" data-type="${escHtml(type)}">
       <div class="result-card-header">
         <div class="result-card-header-info">
-          <h3>${escHtml(r.title)}</h3>
-          <p>📅 ${escHtml(r.dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(r.location)}</p>
+          <h3>${escHtml(title)}</h3>
+          <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
         </div>
-        <span class="badge badge-done">Завершено</span>
+        <span class="badge badge-done">${escHtml(status)}</span>
       </div>
-      <table class="result-table" aria-label="Результати ${escHtml(r.title)}">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Команда</th>
-            <th>Результат</th>
-          </tr>
-        </thead>
+      <table class="result-table" aria-label="Результати ${escHtml(title)}">
+        <thead><tr>${thCells}</tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>
@@ -64,15 +117,14 @@ function renderResultCard(r) {
 
 /**
  * Renders the full results list.
- * Applies filter if provided.
  */
-function renderResults(results, activeFilter = 'all') {
+function renderResults(items, activeFilter = 'all') {
   const container = document.getElementById('results-list');
   if (!container) return;
 
   const filtered = activeFilter === 'all'
-    ? results
-    : results.filter(r => r.type === activeFilter);
+    ? items
+    : items.filter(item => item.tag_title === activeFilter);
 
   if (filtered.length === 0) {
     container.innerHTML = `

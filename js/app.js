@@ -154,33 +154,33 @@ function initTabs() {
   });
 }
 
-/* ── Filter chips (results tab) ─────────────────────────── */
-function initFilters() {
-  const chips = document.querySelectorAll('#result-chips .chip');
-
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-
-      state.resultFilter = chip.dataset.filter;
-
-      if (state.resultsData) {
-        renderResults(state.resultsData, state.resultFilter);
-      }
-    });
-  });
-}
-
 /* ── Data loading ────────────────────────────────────────── */
 async function loadTabContent(tabId) {
+
   if (tabId === 'results' && !state.resultsData) {
     showSkeleton('results-list', 2);
     try {
-      state.resultsData = await fetchResults();
+      const config = await fetchConfig();
+      const visible = config.filter(c => c.visible !== false);
+
+      const withRows = await Promise.all(
+        visible.map(async item => {
+          const result = await fetchResults(item);
+          return { ...item, result };
+        })
+      );
+
+      state.resultsData = withRows;
+
+      // Build filter chips dynamically from tags in config
+      renderFilterChips(state.resultsData, state.resultFilter, (newFilter) => {
+        state.resultFilter = newFilter;
+        renderResults(state.resultsData, state.resultFilter);
+      });
+
       renderResults(state.resultsData, state.resultFilter);
     } catch (err) {
-      console.error('Failed to load results:', err);
+      console.error('[App] Failed to load results:', err);
       document.getElementById('results-list').innerHTML =
         '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити результати</p></div>';
     }
@@ -192,7 +192,7 @@ async function loadTabContent(tabId) {
       state.eventsData = await fetchEvents();
       renderCalendar(state.eventsData);
     } catch (err) {
-      console.error('Failed to load events:', err);
+      console.error('[App] Failed to load events:', err);
       document.getElementById('calendar-list').innerHTML =
         '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити календар</p></div>';
     }
@@ -203,7 +203,7 @@ async function loadTabContent(tabId) {
       state.aboutData = await fetchAbout();
       renderAbout(state.aboutData);
     } catch (err) {
-      console.error('Failed to load about:', err);
+      console.error('[App] Failed to load about:', err);
     }
   }
 }
@@ -229,12 +229,10 @@ function initRefreshButton() {
 }
 
 
+/* ── Boot ────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initTelegram();
   initTabs();
-  initFilters();
   initRefreshButton();
-
-  // Load the default (first) tab immediately
   loadTabContent(state.activeTab);
 });

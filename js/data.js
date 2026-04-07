@@ -12,17 +12,20 @@ const MOCK_RESULTS = [
   {
     id: 'ch-2025-area-vinnytsia',
     type: 'championship',
+    tag_title: 'Чемпіонат України',
+    tag_order: 1,
     title: 'Чемпіонат України · AREA',
     subtitle: 'Ловля форелі в озерах · 2025',
     date: '2025-04-04',
     dateDisplay: '4–5 квітня 2025',
     location: 'Вінниця',
+    status: 'Завершено',
     teams: [
-      { place: 1, name: 'Команда 1',  region: 'Область 1', score: '—' },
-      { place: 2, name: 'Команда 2',  region: 'Область 2', score: '—' },
-      { place: 3, name: 'Команда 3',  region: 'Область 3', score: '—' },
-      { place: 4, name: 'Команда 4',  region: 'Область 4', score: '—' },
-      { place: 5, name: 'Команда 5',  region: 'Область 5', score: '—' },
+      { place: 1, name: 'Команда 1', region: 'Область 1', score: '—' },
+      { place: 2, name: 'Команда 2', region: 'Область 2', score: '—' },
+      { place: 3, name: 'Команда 3', region: 'Область 3', score: '—' },
+      { place: 4, name: 'Команда 4', region: 'Область 4', score: '—' },
+      { place: 5, name: 'Команда 5', region: 'Область 5', score: '—' },
     ],
   },
 ];
@@ -99,19 +102,4 @@ const ABOUT_INFO = {
   ],
 };
 
-/* ── Async getters (swap body for real fetch later) ───── */
-
-async function fetchResults() {
-  // TODO: replace with → fetch('/api/results?discipline=area')
-  return Promise.resolve(MOCK_RESULTS);
-}
-
-async function fetchEvents() {
-  // TODO: replace with → fetch('/api/events?discipline=area')
-  return Promise.resolve(MOCK_EVENTS);
-}
-
-async function fetchAbout() {
-  // TODO: replace with → fetch('/api/about')
-  return Promise.resolve(ABOUT_INFO);
-}
+/* ── Mock data above is consumed by api.js (USE_MOCK mode) ── */
