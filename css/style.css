@@ -136,8 +136,6 @@ button {
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
-  /* invert to white on dark header */
-  filter: brightness(0) invert(1);
 }
 
 @media (min-width: 768px) {
