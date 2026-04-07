@@ -100,7 +100,7 @@ function parseDividers(divStr) {
  * Column 1 = place (#), column 2 = first data cell, etc.
  */
 function divClass(dividers, colNum) {
-  return dividers.has(colNum) ? ' col-divider' : '';
+  return dividers.has(colNum) ? ' style="border-right:1px solid #005BBB"' : '';
 }
 
 /**
@@ -175,61 +175,43 @@ function buildThead(result, dividers) {
     const groups     = result.groups;
     const subHeaders = result.subHeaders || [];
 
-    // Row 1: # + group cells
     const row1Cells = [
-      `<th rowspan="2" class="th-place${divClass(dividers, 1)}">#</th>`,
+      `<th rowspan="2">#</th>`,
     ];
 
     let colNum = 2;
     groups.forEach(g => {
+      const div = divClass(dividers, colNum + g.colspan - 1);
       if (g.colspan === 1) {
-        const cls = divClass(dividers, colNum).trim();
-        row1Cells.push(
-          `<th rowspan="2"${cls ? ` class="${cls}"` : ''}>${escHtml(g.label)}</th>`
-        );
+        row1Cells.push(`<th rowspan="2"${div}>${escHtml(g.label)}</th>`);
       } else {
-        // Divider belongs to LAST column of group
-        const lastCol = colNum + g.colspan - 1;
-        const cls = `th-group${divClass(dividers, lastCol)}`;
-        row1Cells.push(
-          `<th colspan="${g.colspan}" class="${cls.trim()}">${escHtml(g.label)}</th>`
-        );
+        row1Cells.push(`<th colspan="${g.colspan}"${div}>${escHtml(g.label)}</th>`);
       }
       colNum += g.colspan;
     });
 
-    // Row 2: sub-headers only under colspan > 1 groups
     const row2Cells = [];
     colNum = 2;
     groups.forEach(g => {
-      if (g.colspan === 1) {
-        colNum++;
-        return; // covered by rowspan=2
-      }
+      if (g.colspan === 1) { colNum++; return; }
       for (let j = 0; j < g.colspan; j++) {
         const label = subHeaders[g.startCol + j] || '';
-        const lastOfGroup = (j === g.colspan - 1);
-        const cls = lastOfGroup ? divClass(dividers, colNum).trim() : '';
-        row2Cells.push(`<th${cls ? ` class="${cls}"` : ''}>${escHtml(label)}</th>`);
+        const div   = j === g.colspan - 1 ? divClass(dividers, colNum) : '';
+        row2Cells.push(`<th${div}>${escHtml(label)}</th>`);
         colNum++;
       }
     });
 
-    return `
-      <thead>
-        <tr>${row1Cells.join('')}</tr>
-        <tr>${row2Cells.join('')}</tr>
-      </thead>`;
+    return `<thead><tr>${row1Cells.join('')}</tr><tr>${row2Cells.join('')}</tr></thead>`;
   }
 
-  // ── Flat header (single row) ─────────────────────────────
+  // Flat header
   const headers = result?.headers || [];
   const thCells = [
-    `<th class="th-place${divClass(dividers, 1)}">#</th>`,
-    ...headers.map((h, i) => {
-      const cls = divClass(dividers, i + 2).trim();
-      return `<th${cls ? ` class="${cls}"` : ''}>${escHtml(h)}</th>`;
-    }),
+    `<th>${escHtml('#')}</th>`,
+    ...headers.map((h, i) =>
+      `<th${divClass(dividers, i + 2)}>${escHtml(h)}</th>`
+    ),
   ].join('');
   return `<thead><tr>${thCells}</tr></thead>`;
 }
@@ -257,13 +239,10 @@ function renderResultCard(item) {
     totalRows = allRows.length;
     const renderRow = row => `
       <tr>
-        <td class="td-place${divClass(divSet, 1)}">
-          <span class="place ${placeClass(row.place)}">${row.place}</span>
-        </td>
-        ${(row.cells || []).map((cell, i) => {
-          const cls = divClass(divSet, i + 2).trim();
-          return `<td${cls ? ` class="${cls}"` : ''}>${escHtml(String(cell ?? ''))}</td>`;
-        }).join('')}
+        <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
+        ${(row.cells || []).map((cell, i) =>
+          `<td${divClass(divSet, i + 2)}>${escHtml(String(cell ?? ''))}</td>`
+        ).join('')}
       </tr>`;
     tableHtml = buildThead(result, divSet)
               + `<tbody>${allRows.slice(0, PREVIEW_ROWS).map(renderRow).join('')}</tbody>`;
