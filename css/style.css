@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    ФРСУ · AREA Mini App — style.css
-   Mobile-first responsive · max content width 1280px
+   Mobile-first responsive · max content width 1080px
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Variables ─────────────────────────────────────────── */
@@ -41,7 +41,7 @@
   --header-h:        54px;
   --nav-h-mobile:    62px;
   --nav-h-desktop:   50px;
-  --max-w:           1280px;
+  --max-w:           1080px;
 
   /* Spacing */
   --pad-mobile:  12px;
@@ -62,10 +62,10 @@
 }
 
 /* ── Breakpoints used in this file ─────────────────────
-   sm  ≥ 480px   small phones landscape / large phones
+   sm  ≥ 480px   large phones
    md  ≥ 768px   tablet
    lg  ≥ 1024px  desktop — nav moves from bottom → top
-   xl  ≥ 1280px  max content width clamp
+   xl  ≥ 1080px  max content width
 ────────────────────────────────────────────────────── */
 
 /* ── Reset ─────────────────────────────────────────────── */
@@ -309,7 +309,7 @@ button {
   display: none;
   padding: 16px var(--pad-mobile) 0;
   animation: fadeUp var(--t-norm) both;
-  /* Centre content within the 1280px grid */
+  /* Centre content within the 1080px grid */
   max-width: var(--max-w);
   margin: 0 auto;
   width: 100%;
@@ -498,12 +498,8 @@ button {
   align-items: start;
 }
 
-@media (min-width: 640px) {
-  .results-list { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-}
-
-@media (min-width: 1100px) {
-  .results-list { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (min-width: 680px) {
+  .results-list { grid-template-columns: repeat(2, 1fr); gap: 20px; }
 }
 
 /* Card */
@@ -611,11 +607,11 @@ button {
   align-items: start;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .calendar-list { grid-template-columns: repeat(2, 1fr); gap: 16px; }
 }
 
-@media (min-width: 1100px) {
+@media (min-width: 860px) {
   .calendar-list { grid-template-columns: repeat(3, 1fr); gap: 20px; }
 }
 
@@ -737,7 +733,7 @@ button {
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
   .about-content {
     grid-template-columns: 1fr 1fr;
     gap: 0 28px;
