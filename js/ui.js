@@ -69,6 +69,18 @@ function renderFilterChips(items, activeFilter, onChange) {
   });
 }
 
+/* ── Status badge class ──────────────────────────────────── */
+function statusBadgeClass(status) {
+  const s = (status || '').toLowerCase();
+  if (s.includes('завершено'))              return 'badge-done';
+  if (s.includes('відбувається'))           return 'badge-ongoing';
+  if (s.includes('триває реєстрація') ||
+      s.includes('реєстрація відкрита'))    return 'badge-reg-open';
+  if (s.includes('реєстрація закрита'))     return 'badge-reg-closed';
+  if (s.includes('очікується'))             return 'badge-expected';
+  return 'badge-expected';
+}
+
 /* ── Results ─────────────────────────────────────────────── */
 
 /**
@@ -78,31 +90,25 @@ function renderFilterChips(items, activeFilter, onChange) {
 function renderResultCard(item) {
   const { title, dateDisplay, location, status, type, result } = item;
 
+  // Render all cells as plain columns — no merging
   const rows = (result?.rows || []).map(row => `
     <tr>
       <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
-      ${row.cells.map((cell, i) => i === 0
-        ? `<td><div class="athlete-name">${escHtml(cell)}</div>
-               ${row.cells[1] ? `<div class="athlete-region">${escHtml(row.cells[1])}</div>` : ''}
-           </td>`
-        : i === 1 ? '' // region already rendered inside name cell
-        : `<td><span class="score">${escHtml(cell)}</span></td>`
+      ${row.cells.map(cell =>
+        `<td>${escHtml(String(cell ?? ''))}</td>`
       ).join('')}
     </tr>
   `).join('');
 
-  const headers = result?.headers || ['#', 'Команда', 'Результат'];
-  // Build th list — skip index 1 (region, rendered inside name cell)
-  const thCells = headers
-    .filter((_, i) => i !== 1)
-    .map(h => `<th>${escHtml(h)}</th>`)
-    .join('');
+  // All headers rendered as-is
+  const headers = result?.headers || [];
+  const thCells = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
 
   return `
     <div class="result-card" data-type="${escHtml(type)}">
       <div class="result-card-header">
         <div class="result-card-header-info">
-          <span class="badge badge-done">${escHtml(status)}</span>
+          <span class="badge ${statusBadgeClass(status)}">${escHtml(status)}</span>
           <h3>${escHtml(title)}</h3>
           <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
         </div>
