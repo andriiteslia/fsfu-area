@@ -786,6 +786,12 @@ button {
   background: var(--c-blue-pale); color: var(--c-blue-main);
 }
 
+/* Column dividers — applied via .col-divider class */
+.result-table th.col-divider,
+.result-table td.col-divider {
+  border-right: 2px solid var(--c-blue-main) !important;
+}
+
 /* ── Show more button ──────────────────────────────────── */
 .btn-show-more {
   display: flex;
