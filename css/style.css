@@ -131,6 +131,19 @@ button {
 @media (min-width: 768px)  { .header-inner { padding: 0 var(--pad-tablet); } }
 @media (min-width: 1024px) { .header-inner { padding: 0 var(--pad-desktop); } }
 
+.header-logo-rec {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  /* invert to white on dark header */
+  filter: brightness(0) invert(1);
+}
+
+@media (min-width: 768px) {
+  .header-logo-rec { height: 34px; }
+}
+
 .header-title {
   flex: 1;
   display: flex; flex-direction: column;
@@ -688,36 +701,6 @@ button {
 /* ════════════════════════════════════════════════════════
    ABOUT
    ════════════════════════════════════════════════════════ */
-
-.about-hero {
-  background: var(--c-blue-deep);
-  border-radius: var(--radius);
-  padding: 24px 20px 26px;
-  text-align: center; margin-bottom: 4px;
-}
-
-.about-logo {
-  height: 52px; width: auto; object-fit: contain;
-  margin: 0 auto 14px;
-  filter: brightness(0) invert(1);
-}
-
-.about-title {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 18px; font-weight: 800;
-  color: var(--c-white); margin-bottom: 8px; line-height: 1.2;
-}
-
-.about-desc {
-  font-size: 12.5px; color: rgba(255,255,255,0.62);
-  line-height: 1.55; max-width: 480px; margin: 0 auto;
-}
-
-@media (min-width: 768px) {
-  .about-hero  { padding: 32px 32px 34px; }
-  .about-title { font-size: 22px; }
-  .about-desc  { font-size: 13.5px; }
-}
 
 /* About 2-col layout */
 .about-cols {
