@@ -31,10 +31,10 @@
   --c-open:        #C04A00;
   --c-open-bg:     #FFF0E6;
 
-  /* Safe area — set dynamically by JS (mirrors PFL approach)
-     108px = fullscreen mobile (TG status bar + nav)
-     20px  = expanded / desktop                          */
-  --app-top-pad:    20px;
+  /* Safe area — set dynamically by JS
+     100px = fullscreen mobile (TG status bar + nav)
+     0px   = web / desktop (nav bar handles spacing) */
+  --app-top-pad:    0px;
   --tg-safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* Layout */
