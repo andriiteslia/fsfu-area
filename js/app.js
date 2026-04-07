@@ -214,21 +214,16 @@ function initRefreshButton() {
   if (!btn) return;
 
   btn.addEventListener('click', async () => {
-    if (btn.classList.contains('spinning')) return;
-
-    btn.classList.add('spinning');
+    if (btn.disabled) return;
+    btn.disabled = true;
 
     try {
-      // Reset loaded state so data re-fetches
       state.resultsData = null;
       state.eventsData  = null;
       state.aboutData   = null;
-
-      // Reload current tab
       await loadTabContent(state.activeTab);
     } finally {
-      // Keep spin for at least 600ms so it feels responsive
-      setTimeout(() => btn.classList.remove('spinning'), 600);
+      setTimeout(() => { btn.disabled = false; }, 600);
     }
   });
 }
