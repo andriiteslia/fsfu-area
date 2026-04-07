@@ -427,51 +427,28 @@ button {
   grid-column: 1 / -1;   /* span full grid width when inside grid */
 }
 
-/* ════════════════════════════════════════════════════════
-   RESULTS HERO  —  Branded federation banner
-   ════════════════════════════════════════════════════════ */
-
-.results-hero {
-  background: linear-gradient(135deg,
-    var(--c-blue-deep) 0%,
-    var(--c-blue-main) 60%,
-    var(--c-blue-light) 100%
-  );
-  border-radius: var(--radius);
-  padding: 22px 20px;
-  margin-bottom: 16px;
+/* ── Results page title ────────────────────────────────── */
+.results-page-title {
+  padding: 4px 2px 12px;
 }
 
-.results-hero-text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.results-hero-title {
+.results-page-title h2 {
   font-family: 'Montserrat', sans-serif;
   font-size: 20px;
   font-weight: 800;
-  color: #FFFFFF;
+  color: var(--c-text);
   line-height: 1.2;
-  letter-spacing: -0.2px;
+  margin-bottom: 4px;
 }
 
-.results-hero-sub {
+.results-page-title p {
   font-size: 12px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.60);
-  letter-spacing: 0.2px;
+  color: var(--c-text-sub);
 }
 
 @media (min-width: 768px) {
-  .results-hero       { padding: 26px 28px; }
-  .results-hero-title { font-size: 24px; }
-}
-
-@media (min-width: 1024px) {
-  .results-hero       { padding: 28px 32px; }
-  .results-hero-title { font-size: 26px; }
+  .results-page-title h2 { font-size: 24px; }
 }
 
 /* ════════════════════════════════════════════════════════
