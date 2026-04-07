@@ -549,7 +549,11 @@ button {
 /* Results table */
 .result-table { width: 100%; border-collapse: collapse; min-width: 320px; }
 
-.result-table thead tr { border-bottom: 1px solid var(--c-border); }
+/* Uniform border on every cell — all sides, one color */
+.result-table th,
+.result-table td {
+  border: 1px solid #D8E3F0;
+}
 
 /* All th — minimal, Sheets inline styles drive the appearance */
 .result-table th {
@@ -558,14 +562,10 @@ button {
   font-size: 11px;
   font-weight: 600;
   color: var(--c-text);
-  border-right: 1px solid var(--c-border);
   vertical-align: middle;
   text-align: center;
   white-space: normal;
 }
-
-.result-table th:last-child,
-.result-table td:last-child { border-right: none; }
 
 .result-table th:first-child,
 .result-table td:first-child { padding-left: 14px; }
@@ -573,11 +573,7 @@ button {
 .result-table th:last-child,
 .result-table td:last-child  { text-align: right; padding-right: 14px; }
 
-.result-table tbody tr {
-  border-bottom: 1px solid #E8EEF8;
-  transition: background var(--t-fast);
-}
-.result-table tbody tr:last-child { border-bottom: none; }
+.result-table tbody tr { transition: background var(--t-fast); }
 
 /* Zebra striping */
 .result-table tbody tr:nth-child(even) { background: #F4F8FF; }
@@ -585,8 +581,8 @@ button {
 
 /* Click-to-highlight row */
 .result-table tbody tr        { cursor: pointer; }
-.result-table tbody tr.active { background: #D6E8FF !important; outline: 2px solid var(--c-blue-main); outline-offset: -2px; }
-.result-table td                   { padding: 10px; vertical-align: middle; }
+.result-table tbody tr.active { background: #D6E8FF !important; }
+.result-table td              { padding: 10px; vertical-align: middle; }
 
 /* Place badge */
 .place {
