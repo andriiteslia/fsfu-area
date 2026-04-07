@@ -79,11 +79,10 @@ const MOCK_EVENTS = [
 
 const ABOUT_INFO = {
   contacts: [
-    { icon: '🏛️', label: 'Адреса',    value: 'м. Полтава, вул. Соборності 77, оф. 2' },
-    { icon: '📞', label: 'Телефон',   value: '(095) 481-64-64' },
-    { icon: '📧', label: 'Email',     value: 'fsfu2020@gmail.com' },
-    { icon: '🌐', label: 'Вебсайт',   value: 'fsfu.com.ua', url: 'https://fsfu.com.ua' },
-    { icon: '🏅', label: 'Дисципліна', value: 'AREA · Ловля форелі в озерах' },
+    { icon: '🏛️', label: 'Адреса',  value: 'м. Полтава, вул. Соборності 77, оф. 2' },
+    { icon: '📞', label: 'Телефон', value: '(095) 481-64-64' },
+    { icon: '📧', label: 'Email',   value: 'fsfu2020@gmail.com' },
+    { icon: '🌐', label: 'Вебсайт', value: 'fsfu.com.ua', url: 'https://fsfu.com.ua' },
   ],
   regions: [
     { name: 'Івано-Франківська обл.',   teams: ['Карпатська форель', 'Буковельська форель', 'Яремче AREA'] },

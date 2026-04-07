@@ -210,13 +210,16 @@ function renderAbout(about) {
   const regionItems = about.regions.map(renderRegionItem).join('');
 
   container.innerHTML = `
-    <div class="ua-bar"></div>
-
-    <div class="section-label">Контакти</div>
-    <div class="info-card">${contactRows}</div>
-
-    <div class="section-label">Обласні федерації</div>
-    <div class="region-list">${regionItems}</div>
+    <div class="about-cols">
+      <div class="about-col-left">
+        <div class="section-label">Контакти</div>
+        <div class="info-card">${contactRows}</div>
+      </div>
+      <div class="about-col-right">
+        <div class="section-label">Обласні федерації</div>
+        <div class="region-list">${regionItems}</div>
+      </div>
+    </div>
   `;
 
   // Attach accordion toggle
