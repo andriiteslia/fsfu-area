@@ -100,7 +100,7 @@ function parseDividers(divStr) {
  * Column 1 = place (#), column 2 = first data cell, etc.
  */
 function divClass(dividers, colNum) {
-  return dividers.has(colNum) ? ' style="border-right:1px solid #B0BEC8"' : '';
+  return dividers.has(colNum) ? ' style="border-right:2px solid #D8E3F0"' : '';
 }
 
 /**
@@ -128,9 +128,7 @@ function renderRichTable(result, divSet, previewCount) {
     if (cell.b && !isHeader) style.push('font-weight:700');
     if (cell.a === 'center') style.push('text-align:center');
     if (cell.a === 'right')  style.push('text-align:right');
-    // Right border: Sheets native border takes priority, then config dividers
-    if (cell.br)          style.push('border-right:1px solid ' + cell.br);
-    else if (hasDivider)  style.push('border-right:1px solid #B0BEC8');
+    if (hasDivider) style.push('border-right:2px solid #D8E3F0');
 
     const attrs = [];
     if (cell.cs > 1) attrs.push('colspan="' + cell.cs + '"');
