@@ -104,9 +104,65 @@ function divClass(dividers, colNum) {
 }
 
 /**
- * Builds <thead> HTML — handles flat and multi/grouped header formats.
- * Supports type: 'multi' | 'grouped' | 'flat'
+ * Renders a full <thead>+<tbody> from rich result format.
+ * Preserves Sheets colors, merges, bold, alignment.
+ * @param {Object} result  - rich result from API
+ * @param {Set}    divSet  - column numbers with right dividers
+ * @param {number|null} previewCount - limit data rows (null = all)
+ * @returns {{ thead, tbody, totalDataRows }}
  */
+function renderRichTable(result, divSet, previewCount) {
+  const rows      = result?.rows || [];
+  const headerRows = rows.filter(r => r.h);
+  const dataRows   = rows.filter(r => !r.h);
+  const showRows   = previewCount != null ? dataRows.slice(0, previewCount) : dataRows;
+
+  const renderCell = (cell, isHeader) => {
+    const tag      = isHeader ? 'th' : 'td';
+    const endCol   = cell.col + cell.cs;    // 1-indexed end column
+    const hasDivider = divSet.has(endCol);
+
+    const style = [];
+    if (cell.bg) style.push('background-color:' + cell.bg);
+    if (cell.fc) style.push('color:' + cell.fc);
+    if (cell.b && !isHeader) style.push('font-weight:700');
+    if (cell.a === 'center') style.push('text-align:center');
+    if (cell.a === 'right')  style.push('text-align:right');
+
+    const classes = [];
+    if (hasDivider) classes.push('col-divider');
+
+    const attrs = [];
+    if (cell.cs > 1) attrs.push('colspan="' + cell.cs + '"');
+    if (cell.rs > 1) attrs.push('rowspan="' + cell.rs + '"');
+    if (style.length)   attrs.push('style="' + style.join(';') + '"');
+    if (classes.length) attrs.push('class="' + classes.join(' ') + '"');
+
+    // Place badge: column 0 of data rows
+    let content;
+    if (!isHeader && cell.col === 0) {
+      const n = parseInt(cell.v) || 0;
+      content = '<span class="place ' + placeClass(n) + '">' + escHtml(cell.v) + '</span>';
+    } else {
+      content = escHtml(cell.v);
+    }
+
+    const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
+    return '<' + tag + attrStr + '>' + content + '</' + tag + '>';
+  };
+
+  const thead = headerRows.map(row =>
+    '<tr>' + (row.c || []).map(cell => renderCell(cell, true)).join('') + '</tr>'
+  ).join('');
+
+  const tbody = showRows.map(row =>
+    '<tr>' + (row.c || []).map(cell => renderCell(cell, false)).join('') + '</tr>'
+  ).join('');
+
+  return { thead, tbody, totalDataRows: dataRows.length };
+}
+
+
 function buildThead(result, dividers) {
   dividers = dividers || new Set();
 
@@ -188,27 +244,38 @@ function buildThead(result, dividers) {
  */
 function renderResultCard(item) {
   const { id, title, dateDisplay, location, status, type, result } = item;
-  const dividers = parseDividers(item.dividers);
+  const divSet = parseDividers(item.dividers);
 
-  const allRows = result?.rows || [];
-  const preview = allRows.slice(0, PREVIEW_ROWS);
-  const hasMore = allRows.length > PREVIEW_ROWS;
+  let tableHtml, hasMore, totalRows;
 
-  const renderRow = row => `
-    <tr>
-      <td class="td-place${divClass(dividers, 1)}">
-        <span class="place ${placeClass(row.place)}">${row.place}</span>
-      </td>
-      ${row.cells.map((cell, i) => {
-        const cls = divClass(dividers, i + 2).trim();
-        return `<td${cls ? ` class="${cls}"` : ''}>${escHtml(String(cell ?? ''))}</td>`;
-      }).join('')}
-    </tr>`;
+  if (result?.type === 'rich') {
+    const { thead, tbody, totalDataRows } = renderRichTable(result, divSet, PREVIEW_ROWS);
+    hasMore    = totalDataRows > PREVIEW_ROWS;
+    totalRows  = totalDataRows;
+    tableHtml  = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
+  } else {
+    // Fallback: flat / multi format
+    const allRows = result?.rows || [];
+    hasMore   = allRows.length > PREVIEW_ROWS;
+    totalRows = allRows.length;
+    const renderRow = row => `
+      <tr>
+        <td class="td-place${divClass(divSet, 1)}">
+          <span class="place ${placeClass(row.place)}">${row.place}</span>
+        </td>
+        ${(row.cells || []).map((cell, i) => {
+          const cls = divClass(divSet, i + 2).trim();
+          return `<td${cls ? ` class="${cls}"` : ''}>${escHtml(String(cell ?? ''))}</td>`;
+        }).join('')}
+      </tr>`;
+    tableHtml = buildThead(result, divSet)
+              + `<tbody>${allRows.slice(0, PREVIEW_ROWS).map(renderRow).join('')}</tbody>`;
+  }
 
   const moreBtn = hasMore ? `
     <button class="btn-show-more" data-card-id="${escHtml(id)}">
       Показати детальніше
-      <span class="btn-show-more-count">${allRows.length - PREVIEW_ROWS} ще</span>
+      <span class="btn-show-more-count">${totalRows - PREVIEW_ROWS} ще</span>
     </button>` : '';
 
   return `
@@ -221,10 +288,7 @@ function renderResultCard(item) {
         </div>
       </div>
       <div class="result-table-wrap">
-        <table class="result-table">
-          ${buildThead(result, dividers)}
-          <tbody>${preview.map(renderRow).join('')}</tbody>
-        </table>
+        <table class="result-table">${tableHtml}</table>
       </div>
       ${moreBtn}
     </div>
@@ -238,21 +302,24 @@ function renderResultCard(item) {
  */
 function openDetailPage(item) {
   const { title, dateDisplay, location, status, result } = item;
-  const dividers = parseDividers(item.dividers);
+  const divSet = parseDividers(item.dividers);
 
-  const allRows = result?.rows || [];
-  const rows = allRows.map(row => `
-    <tr>
-      <td class="td-place${divClass(dividers, 1)}">
-        <span class="place ${placeClass(row.place)}">${row.place}</span>
-      </td>
-      ${row.cells.map((cell, i) => {
-        const cls = divClass(dividers, i + 2).trim();
-        return `<td${cls ? ` class="${cls}"` : ''}>${escHtml(String(cell ?? ''))}</td>`;
-      }).join('')}
-    </tr>`).join('');
-
-  // Create overlay
+  let tableHtml;
+  if (result?.type === 'rich') {
+    const { thead, tbody } = renderRichTable(result, divSet, null);
+    tableHtml = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
+  } else {
+    const rows = result?.rows || [];
+    const renderRow = row => `
+      <tr>
+        <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
+        ${(row.cells || []).map(cell =>
+          `<td>${escHtml(String(cell ?? ''))}</td>`
+        ).join('')}
+      </tr>`;
+    tableHtml = buildThead(result, divSet)
+              + `<tbody>${rows.map(renderRow).join('')}</tbody>`;
+  }
   const overlay = document.createElement('div');
   overlay.className = 'detail-overlay';
   overlay.innerHTML = `
@@ -267,10 +334,7 @@ function openDetailPage(item) {
       </div>
       <div class="detail-body">
         <div class="result-table-wrap">
-          <table class="result-table detail-table">
-            ${buildThead(result, dividers)}
-            <tbody>${rows}</tbody>
-          </table>
+          <table class="result-table detail-table">${tableHtml}</table>
         </div>
       </div>
     </div>
