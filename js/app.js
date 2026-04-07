@@ -23,7 +23,7 @@ function initTelegram() {
     const tg = window.Telegram?.WebApp;
     if (!tg) return;
 
-    const FULLSCREEN_PAD = 100; // px — safe zone for TG fullscreen on mobile
+    const FULLSCREEN_PAD = 92; // px — safe zone for TG fullscreen on mobile
 
     function setPad(px) {
       document.documentElement.style.setProperty('--app-top-pad', px + 'px');
