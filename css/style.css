@@ -546,33 +546,31 @@ button {
 }
 
 /* Results table */
-.result-table { width: 100%; border-collapse: collapse; flex: 1; min-width: 320px; }
+.result-table { width: 100%; border-collapse: collapse; min-width: 320px; }
 
-.result-table thead tr {
-  background: #F0F4FF;
-  border-bottom: 1.5px solid var(--c-border);
-}
+.result-table thead tr { border-bottom: 1.5px solid var(--c-border); }
 
 .result-table th {
-  padding: 7px 10px; text-align: left;
+  padding: 7px 10px;
+  text-align: left;
+  font-family: 'Montserrat', sans-serif;
   font-size: 10px; font-weight: 700;
   color: var(--c-text-sub);
   text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
   border-right: 1px solid var(--c-border);
+  vertical-align: middle;
+}
+
+/* th with Sheets bg color — natural rendering, no uppercase override */
+.result-table th[style*="background-color"] {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--c-text);
+  font-size: 11px;
+  text-align: center;
 }
 
 .result-table th:last-child { border-right: none; }
-
-/* Group header row */
-.th-group {
-  text-align: center !important;
-  background: var(--c-blue-pale);
-  color: var(--c-blue-main) !important;
-  border-bottom: 1px solid var(--c-border);
-}
-
-/* Place column */
-.th-place { width: 40px; }
 
 .result-table th:first-child,
 .result-table td:first-child { padding-left: 14px; }
