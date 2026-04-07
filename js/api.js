@@ -16,7 +16,7 @@
 /* ── Config ─────────────────────────────────────────────── */
 
 const API_CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxAj8xcBQEqZS_3W-JIZmACyDmDBZqik1OWgnHH3iSk8G2e1kp4BgCta-x6LKTusRec/exec',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbypvxjJt5DwlnIeDtBvlc2xZvbbNtPPsuF7qLOnFvab1hGSt_LggvqG8Y6pI8YXGcCr/exec',
 
   CONFIG_SHEET_ID:   '10ZIbNLCBTmmC9BClB-Cj7IUjzCyus4rEV7KzQKsMNQs',
   CONFIG_SHEET_NAME: 'config_fsfu_area',
@@ -88,6 +88,7 @@ async function fetchConfig() {
       dataSheetName: '',
       dataRange:     'A:E',
       headerRows:    1,
+      dividers:      '',
       visible:       true,
     }));
   }

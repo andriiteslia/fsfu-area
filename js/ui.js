@@ -86,53 +86,104 @@ function statusBadgeClass(status) {
 const PREVIEW_ROWS = 4;
 
 /**
- * Builds <thead> HTML — handles flat and grouped header formats.
+ * Parses "2,5,8" → Set{2,5,8}
  */
-function buildThead(result) {
-  if (result?.type === 'grouped' && result.groups) {
-    // Row 1: group headers with colspan
-    const groupCells = [`<th rowspan="2" class="th-place">#</th>`];
-    result.groups.forEach(g => {
-      if (g.colspan > 1) {
-        groupCells.push(`<th colspan="${g.colspan}" class="th-group">${escHtml(g.label)}</th>`);
+function parseDividers(divStr) {
+  if (!divStr) return new Set();
+  return new Set(
+    String(divStr).split(',').map(s => Number(s.trim())).filter(n => n > 0)
+  );
+}
+
+/**
+ * Returns extra CSS class string for a cell at 1-indexed colNum.
+ * Column 1 = place (#), column 2 = first data cell, etc.
+ */
+function divClass(dividers, colNum) {
+  return dividers.has(colNum) ? ' col-divider' : '';
+}
+
+/**
+ * Builds <thead> HTML — handles flat and multi (grouped) header formats.
+ * dividers: Set of 1-indexed column numbers that get a right border.
+ */
+function buildThead(result, dividers) {
+  dividers = dividers || new Set();
+
+  // ── Multi (grouped) header ───────────────────────────────
+  if (result?.type === 'multi' && Array.isArray(result.groups)) {
+    const groups     = result.groups;
+    const subHeaders = result.subHeaders || [];
+
+    // Row 1: # + group cells
+    const row1Cells = [
+      `<th rowspan="2" class="th-place${divClass(dividers, 1)}">#</th>`,
+    ];
+
+    let colNum = 2; // 1=#, 2=first data col
+    groups.forEach(g => {
+      if (g.colspan === 1) {
+        // Single-col group → rowspan=2 (no sub-header)
+        row1Cells.push(
+          `<th rowspan="2"${divClass(dividers, colNum) ? ` class="${divClass(dividers, colNum).trim()}"` : ''}>${escHtml(g.label)}</th>`
+        );
+        colNum++;
       } else {
-        groupCells.push(`<th rowspan="2">${escHtml(g.label)}</th>`);
+        const cls = `th-group${divClass(dividers, colNum + g.colspan - 1)}`;
+        row1Cells.push(
+          `<th colspan="${g.colspan}" class="${cls}">${escHtml(g.label)}</th>`
+        );
+        colNum += g.colspan;
       }
     });
 
-    // Row 2: sub-headers (only under colspan groups)
-    const subCells = [];
-    let subIdx = 0;
-    result.groups.forEach(g => {
-      if (g.colspan > 1) {
-        for (let i = 0; i < g.colspan; i++) {
-          const label = result.subHeaders?.[subIdx] || '';
-          subCells.push(`<th>${escHtml(label)}</th>`);
-          subIdx++;
-        }
-      } else {
-        subIdx++;
+    // Row 2: sub-headers only under colspan groups
+    const row2Cells = [];
+    colNum = 2;
+    groups.forEach(g => {
+      if (g.colspan === 1) {
+        colNum++;
+        return; // rowspan=2 — skip
+      }
+      for (let j = 0; j < g.colspan; j++) {
+        const label = subHeaders[g.startCol + j] || '';
+        const cls = divClass(dividers, colNum).trim();
+        row2Cells.push(
+          `<th${cls ? ` class="${cls}"` : ''}>${escHtml(label)}</th>`
+        );
+        colNum++;
       }
     });
 
     return `
       <thead>
-        <tr>${groupCells.join('')}</tr>
-        <tr>${subCells.join('')}</tr>
+        <tr>${row1Cells.join('')}</tr>
+        <tr>${row2Cells.join('')}</tr>
       </thead>`;
   }
 
-  // Flat headers
+  // ── Flat header (single row) ─────────────────────────────
   const headers = result?.headers || [];
-  const thCells = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
+  const thCells = [
+    `<th class="th-place${divClass(dividers, 1)}">#</th>`,
+    ...headers.map((h, i) => {
+      const cls = divClass(dividers, i + 2).trim();
+      return `<th${cls ? ` class="${cls}"` : ''}>${escHtml(h)}</th>`;
+    }),
+  ].join('');
   return `<thead><tr>${thCells}</tr></thead>`;
 }
+
+/* ── Results ─────────────────────────────────────────────── */
+
+const PREVIEW_ROWS = 4;
 
 /**
  * Renders a single result card (preview: first 4 rows + "Показати детальніше").
  */
 function renderResultCard(item) {
   const { id, title, dateDisplay, location, status, type, result } = item;
+  const dividers = parseDividers(item.dividers);
 
   const allRows = result?.rows || [];
   const preview = allRows.slice(0, PREVIEW_ROWS);
@@ -140,8 +191,13 @@ function renderResultCard(item) {
 
   const renderRow = row => `
     <tr>
-      <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
-      ${row.cells.map(cell => `<td>${escHtml(String(cell ?? ''))}</td>`).join('')}
+      <td class="td-place${divClass(dividers, 1)}">
+        <span class="place ${placeClass(row.place)}">${row.place}</span>
+      </td>
+      ${row.cells.map((cell, i) => {
+        const cls = divClass(dividers, i + 2).trim();
+        return `<td${cls ? ` class="${cls}"` : ''}>${escHtml(String(cell ?? ''))}</td>`;
+      }).join('')}
     </tr>`;
 
   const moreBtn = hasMore ? `
@@ -160,8 +216,8 @@ function renderResultCard(item) {
         </div>
       </div>
       <div class="result-table-wrap">
-        <table class="result-table" aria-label="Результати ${escHtml(title)}">
-          ${buildThead(result)}
+        <table class="result-table">
+          ${buildThead(result, dividers)}
           <tbody>${preview.map(renderRow).join('')}</tbody>
         </table>
       </div>
@@ -177,12 +233,18 @@ function renderResultCard(item) {
  */
 function openDetailPage(item) {
   const { title, dateDisplay, location, status, result } = item;
+  const dividers = parseDividers(item.dividers);
 
   const allRows = result?.rows || [];
-  const rows    = allRows.map(row => `
+  const rows = allRows.map(row => `
     <tr>
-      <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
-      ${row.cells.map(cell => `<td>${escHtml(String(cell ?? ''))}</td>`).join('')}
+      <td class="td-place${divClass(dividers, 1)}">
+        <span class="place ${placeClass(row.place)}">${row.place}</span>
+      </td>
+      ${row.cells.map((cell, i) => {
+        const cls = divClass(dividers, i + 2).trim();
+        return `<td${cls ? ` class="${cls}"` : ''}>${escHtml(String(cell ?? ''))}</td>`;
+      }).join('')}
     </tr>`).join('');
 
   // Create overlay
@@ -201,7 +263,7 @@ function openDetailPage(item) {
       <div class="detail-body">
         <div class="result-table-wrap">
           <table class="result-table detail-table">
-            ${buildThead(result)}
+            ${buildThead(result, dividers)}
             <tbody>${rows}</tbody>
           </table>
         </div>
