@@ -16,18 +16,14 @@
 /* ── Config ─────────────────────────────────────────────── */
 
 const API_CONFIG = {
-  // Set this after deploying Apps Script Web App
-  // e.g. 'https://script.google.com/macros/s/AKfy.../exec'
-  APPS_SCRIPT_URL: '',
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxAj8xcBQEqZS_3W-JIZmACyDmDBZqik1OWgnHH3iSk8G2e1kp4BgCta-x6LKTusRec/exec',
 
-  // Google Sheets IDs (used by Apps Script, not called directly from app)
-  CONFIG_SHEET_ID: '10ZIbNLCBTmmC9BClB-Cj7IUjzCyus4rEV7KzQKsMNQs',
+  CONFIG_SHEET_ID:   '10ZIbNLCBTmmC9BClB-Cj7IUjzCyus4rEV7KzQKsMNQs',
   CONFIG_SHEET_NAME: 'config_fsfu_area',
+  DATA_SHEET_ID:     '1qdiwSvxIznLjUyI6LMZmxTrYl8MPZ-zB0y9tEYosulw',
 
-  DATA_SHEET_ID: '1qdiwSvxIznLjUyI6LMZmxTrYl8MPZ-zB0y9tEYosulw',
-
-  // Toggle: true = use mock data (data.js), false = call Apps Script
-  USE_MOCK: true,
+  // false = real data from Apps Script, true = mock data from data.js
+  USE_MOCK: false,
 };
 
 /* ── Generic fetch helper ────────────────────────────────── */
