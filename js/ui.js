@@ -86,17 +86,57 @@ function statusBadgeClass(status) {
 const PREVIEW_ROWS = 4;
 
 /**
+ * Builds <thead> HTML — handles flat and grouped header formats.
+ */
+function buildThead(result) {
+  if (result?.type === 'grouped' && result.groups) {
+    // Row 1: group headers with colspan
+    const groupCells = [`<th rowspan="2" class="th-place">#</th>`];
+    result.groups.forEach(g => {
+      if (g.colspan > 1) {
+        groupCells.push(`<th colspan="${g.colspan}" class="th-group">${escHtml(g.label)}</th>`);
+      } else {
+        groupCells.push(`<th rowspan="2">${escHtml(g.label)}</th>`);
+      }
+    });
+
+    // Row 2: sub-headers (only under colspan groups)
+    const subCells = [];
+    let subIdx = 0;
+    result.groups.forEach(g => {
+      if (g.colspan > 1) {
+        for (let i = 0; i < g.colspan; i++) {
+          const label = result.subHeaders?.[subIdx] || '';
+          subCells.push(`<th>${escHtml(label)}</th>`);
+          subIdx++;
+        }
+      } else {
+        subIdx++;
+      }
+    });
+
+    return `
+      <thead>
+        <tr>${groupCells.join('')}</tr>
+        <tr>${subCells.join('')}</tr>
+      </thead>`;
+  }
+
+  // Flat headers
+  const headers = result?.headers || [];
+  const thCells = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
+  return `<thead><tr>${thCells}</tr></thead>`;
+}
+
+/**
  * Renders a single result card (preview: first 4 rows + "Показати детальніше").
  */
 function renderResultCard(item) {
   const { id, title, dateDisplay, location, status, type, result } = item;
 
-  const allRows  = result?.rows || [];
-  const preview  = allRows.slice(0, PREVIEW_ROWS);
-  const hasMore  = allRows.length > PREVIEW_ROWS;
-
-  const headers  = result?.headers || [];
-  const thCells  = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
+  const allRows = result?.rows || [];
+  const preview = allRows.slice(0, PREVIEW_ROWS);
+  const hasMore = allRows.length > PREVIEW_ROWS;
 
   const renderRow = row => `
     <tr>
@@ -119,10 +159,12 @@ function renderResultCard(item) {
           <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
         </div>
       </div>
-      <table class="result-table" aria-label="Результати ${escHtml(title)}">
-        <thead><tr>${thCells}</tr></thead>
-        <tbody>${preview.map(renderRow).join('')}</tbody>
-      </table>
+      <div class="result-table-wrap">
+        <table class="result-table" aria-label="Результати ${escHtml(title)}">
+          ${buildThead(result)}
+          <tbody>${preview.map(renderRow).join('')}</tbody>
+        </table>
+      </div>
       ${moreBtn}
     </div>
   `;
@@ -137,8 +179,6 @@ function openDetailPage(item) {
   const { title, dateDisplay, location, status, result } = item;
 
   const allRows = result?.rows || [];
-  const headers = result?.headers || [];
-  const thCells = [`<th>#</th>`, ...headers.map(h => `<th>${escHtml(h)}</th>`)].join('');
   const rows    = allRows.map(row => `
     <tr>
       <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
@@ -159,10 +199,12 @@ function openDetailPage(item) {
         </div>
       </div>
       <div class="detail-body">
-        <table class="result-table detail-table">
-          <thead><tr>${thCells}</tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div class="result-table-wrap">
+          <table class="result-table detail-table">
+            ${buildThead(result)}
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
       </div>
     </div>
   `;

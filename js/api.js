@@ -87,6 +87,7 @@ async function fetchConfig() {
       dataSheetId:   API_CONFIG.DATA_SHEET_ID,
       dataSheetName: '',
       dataRange:     'A:E',
+      headerRows:    1,
       visible:       true,
     }));
   }
@@ -121,9 +122,10 @@ async function fetchResults(configItem) {
   }
 
   return apiFetch('getResults', {
-    sheetId:   configItem.dataSheetId,
-    sheetName: configItem.dataSheetName,
-    range:     configItem.dataRange,
+    sheetId:    configItem.dataSheetId,
+    sheetName:  configItem.dataSheetName,
+    range:      configItem.dataRange,
+    headerRows: configItem.headerRows || 1,
   });
 }
 
