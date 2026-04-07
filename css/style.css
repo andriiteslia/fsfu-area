@@ -14,7 +14,7 @@
 
   /* Neutral */
   --c-white:       #FFFFFF;
-  --c-bg:          #EFF3FB;
+  --c-bg:          #FFFFFF;
   --c-card:        #FFFFFF;
   --c-border:      #D8E3F0;
   --c-text:        #0D1B38;
@@ -539,11 +539,17 @@ button {
 .badge-reg-closed  { background: #B8860B;  color: #fff; }
 .badge-expected    { background: #5A6B8A;  color: #fff; }
 
+/* Results table wrapper — enables horizontal scroll on mobile */
+.result-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Results table */
-.result-table { width: 100%; border-collapse: collapse; flex: 1; }
+.result-table { width: 100%; border-collapse: collapse; flex: 1; min-width: 320px; }
 
 .result-table thead tr {
-  background: #F7F9FD;
+  background: #F0F4FF;
   border-bottom: 1.5px solid var(--c-border);
 }
 
@@ -551,8 +557,22 @@ button {
   padding: 7px 10px; text-align: left;
   font-size: 10px; font-weight: 700;
   color: var(--c-text-sub);
-  text-transform: uppercase; letter-spacing: 0.6px; white-space: nowrap;
+  text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+  border-right: 1px solid var(--c-border);
 }
+
+.result-table th:last-child { border-right: none; }
+
+/* Group header row */
+.th-group {
+  text-align: center !important;
+  background: var(--c-blue-pale);
+  color: var(--c-blue-main) !important;
+  border-bottom: 1px solid var(--c-border);
+}
+
+/* Place column */
+.th-place { width: 40px; }
 
 .result-table th:first-child,
 .result-table td:first-child { padding-left: 14px; }
