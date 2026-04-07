@@ -222,13 +222,15 @@ button {
   color: var(--c-blue-main);
 }
 
-/* Press micro-interaction */
-.nav-btn:active {
+/* Press micro-interaction — works on both mouse and touch */
+.nav-btn:active,
+.nav-btn.pressing {
   transform: scale(0.88);
   background: rgba(0, 91, 187, 0.14);
 }
 
-.nav-btn.active:active {
+.nav-btn.active:active,
+.nav-btn.active.pressing {
   transform: scale(0.88);
 }
 
