@@ -564,7 +564,6 @@ button {
   color: var(--c-text);
   vertical-align: middle;
   text-align: center;
-  white-space: normal;
 }
 
 .result-table th:first-child,
@@ -582,7 +581,8 @@ button {
 /* Click-to-highlight row */
 .result-table tbody tr        { cursor: pointer; }
 .result-table tbody tr.active { background: #D6E8FF !important; }
-.result-table td              { padding: 10px; vertical-align: middle; }
+.result-table td              { padding: 10px; vertical-align: middle; white-space: nowrap; }
+.result-table th              { white-space: nowrap; }
 
 /* Place badge */
 .place {
