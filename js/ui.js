@@ -112,15 +112,16 @@ function divClass(dividers, colNum) {
  * @returns {{ thead, tbody, totalDataRows }}
  */
 function renderRichTable(result, divSet, previewCount) {
-  const rows      = result?.rows || [];
+  const rows       = result?.rows || [];
   const headerRows = rows.filter(r => r.h);
   const dataRows   = rows.filter(r => !r.h);
   const showRows   = previewCount != null ? dataRows.slice(0, previewCount) : dataRows;
 
-  const renderCell = (cell, isHeader) => {
-    const tag      = isHeader ? 'th' : 'td';
-    const endCol   = cell.col + cell.cs;    // 1-indexed end column
+  const renderCell = (cell, isHeader, headerRowIdx) => {
+    const tag       = isHeader ? 'th' : 'td';
+    const endCol    = cell.col + cell.cs;
     const hasDivider = divSet.has(endCol);
+    const isSub     = isHeader && headerRowIdx > 0;
 
     const style = [];
     if (cell.bg) style.push('background-color:' + cell.bg);
@@ -131,6 +132,7 @@ function renderRichTable(result, divSet, previewCount) {
 
     const classes = [];
     if (hasDivider) classes.push('col-divider');
+    if (isSub)      classes.push('th-sub');
 
     const attrs = [];
     if (cell.cs > 1) attrs.push('colspan="' + cell.cs + '"');
@@ -151,12 +153,12 @@ function renderRichTable(result, divSet, previewCount) {
     return '<' + tag + attrStr + '>' + content + '</' + tag + '>';
   };
 
-  const thead = headerRows.map(row =>
-    '<tr>' + (row.c || []).map(cell => renderCell(cell, true)).join('') + '</tr>'
+  const thead = headerRows.map((row, rowIdx) =>
+    '<tr>' + (row.c || []).map(cell => renderCell(cell, true, rowIdx)).join('') + '</tr>'
   ).join('');
 
   const tbody = showRows.map(row =>
-    '<tr>' + (row.c || []).map(cell => renderCell(cell, false)).join('') + '</tr>'
+    '<tr>' + (row.c || []).map(cell => renderCell(cell, false, 0)).join('') + '</tr>'
   ).join('');
 
   return { thead, tbody, totalDataRows: dataRows.length };
