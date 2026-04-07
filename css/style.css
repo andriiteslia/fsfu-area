@@ -521,9 +521,10 @@ button {
 }
 
 .result-card-header-info p {
-  font-size: 11px;
-  color: rgba(255,255,255,0.58);
-  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.60);
+  letter-spacing: 0.2px;
 }
 
 /* Badge */
