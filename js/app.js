@@ -166,6 +166,7 @@ async function loadTabContent(tabId) {
       const withRows = await Promise.all(
         visible.map(async item => {
           const result = await fetchResults(item);
+          console.log('[Debug] fetchResults for', item.id, '→ type:', result?.type, 'groups:', result?.groups?.length);
           return { ...item, result };
         })
       );

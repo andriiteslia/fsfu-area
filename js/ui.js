@@ -104,14 +104,21 @@ function divClass(dividers, colNum) {
 }
 
 /**
- * Builds <thead> HTML — handles flat and multi (grouped) header formats.
- * dividers: Set of 1-indexed column numbers that get a right border.
+ * Builds <thead> HTML — handles flat and multi/grouped header formats.
+ * Supports type: 'multi' | 'grouped' | 'flat'
  */
 function buildThead(result, dividers) {
   dividers = dividers || new Set();
 
-  // ── Multi (grouped) header ───────────────────────────────
-  if (result?.type === 'multi' && Array.isArray(result.groups)) {
+  // ── Debug (remove after confirmed working) ───────────────
+  console.log('[buildThead] type:', result?.type, 'groups:', result?.groups?.length);
+
+  // ── Multi/grouped header ─────────────────────────────────
+  const isMulti = (result?.type === 'multi' || result?.type === 'grouped')
+                  && Array.isArray(result.groups)
+                  && result.groups.length > 0;
+
+  if (isMulti) {
     const groups     = result.groups;
     const subHeaders = result.subHeaders || [];
 
@@ -120,37 +127,37 @@ function buildThead(result, dividers) {
       `<th rowspan="2" class="th-place${divClass(dividers, 1)}">#</th>`,
     ];
 
-    let colNum = 2; // 1=#, 2=first data col
+    let colNum = 2;
     groups.forEach(g => {
       if (g.colspan === 1) {
-        // Single-col group → rowspan=2 (no sub-header)
+        const cls = divClass(dividers, colNum).trim();
         row1Cells.push(
-          `<th rowspan="2"${divClass(dividers, colNum) ? ` class="${divClass(dividers, colNum).trim()}"` : ''}>${escHtml(g.label)}</th>`
+          `<th rowspan="2"${cls ? ` class="${cls}"` : ''}>${escHtml(g.label)}</th>`
         );
-        colNum++;
       } else {
-        const cls = `th-group${divClass(dividers, colNum + g.colspan - 1)}`;
+        // Divider belongs to LAST column of group
+        const lastCol = colNum + g.colspan - 1;
+        const cls = `th-group${divClass(dividers, lastCol)}`;
         row1Cells.push(
-          `<th colspan="${g.colspan}" class="${cls}">${escHtml(g.label)}</th>`
+          `<th colspan="${g.colspan}" class="${cls.trim()}">${escHtml(g.label)}</th>`
         );
-        colNum += g.colspan;
       }
+      colNum += g.colspan;
     });
 
-    // Row 2: sub-headers only under colspan groups
+    // Row 2: sub-headers only under colspan > 1 groups
     const row2Cells = [];
     colNum = 2;
     groups.forEach(g => {
       if (g.colspan === 1) {
         colNum++;
-        return; // rowspan=2 — skip
+        return; // covered by rowspan=2
       }
       for (let j = 0; j < g.colspan; j++) {
         const label = subHeaders[g.startCol + j] || '';
-        const cls = divClass(dividers, colNum).trim();
-        row2Cells.push(
-          `<th${cls ? ` class="${cls}"` : ''}>${escHtml(label)}</th>`
-        );
+        const lastOfGroup = (j === g.colspan - 1);
+        const cls = lastOfGroup ? divClass(dividers, colNum).trim() : '';
+        row2Cells.push(`<th${cls ? ` class="${cls}"` : ''}>${escHtml(label)}</th>`);
         colNum++;
       }
     });
