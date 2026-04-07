@@ -49,8 +49,8 @@
   --pad-desktop: 40px;
 
   /* Shape */
-  --radius:    14px;
-  --radius-sm:  8px;
+  --radius:    4px;
+  --radius-sm:  4px;
 
   /* Shadows */
   --shadow:    0 2px 16px rgba(0, 45, 110, 0.10);
@@ -113,7 +113,7 @@ button {
   height: calc(var(--header-h) + var(--app-top-pad));
   padding-top: var(--app-top-pad);
   background: var(--c-blue-deep);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
   flex-shrink: 0;
   transition: height 0.2s ease, padding-top 0.2s ease;
 }
@@ -182,12 +182,11 @@ button {
   display: flex;
   background: var(--c-white);
   border-top: 1.5px solid var(--c-border);
-  box-shadow: 0 -3px 16px rgba(0, 45, 110, 0.09);
+  box-shadow: none;
 }
 
 @media (min-width: 1024px) {
   .bottom-nav {
-    /* ── Desktop: sticky top tab-bar, full width ── */
     position: sticky;
     top: var(--header-h);
     bottom: auto;
@@ -198,7 +197,7 @@ button {
     order: 2;
     border-top: none;
     border-bottom: 2px solid var(--c-border);
-    box-shadow: 0 2px 8px rgba(0, 45, 110, 0.06);
+    box-shadow: none;
     padding: 0;
     justify-content: stretch;
     gap: 0;
@@ -315,12 +314,15 @@ button {
 /* ── Tab sections ─────────────────────────────────────── */
 .tab {
   display: none;
-  padding: 16px var(--pad-mobile) 0;
+  padding: 12px var(--pad-mobile) 0;
   animation: fadeUp var(--t-norm) both;
-  /* Centre content within the 1080px grid */
   max-width: var(--max-w);
   margin: 0 auto;
   width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .tab { padding-top: 8px; }
 }
 
 .tab.active { display: block; }
