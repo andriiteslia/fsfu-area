@@ -102,10 +102,10 @@ function renderResultCard(item) {
     <div class="result-card" data-type="${escHtml(type)}">
       <div class="result-card-header">
         <div class="result-card-header-info">
+          <span class="badge badge-done">${escHtml(status)}</span>
           <h3>${escHtml(title)}</h3>
           <p>📅 ${escHtml(dateDisplay)} &nbsp;·&nbsp; 📍 ${escHtml(location)}</p>
         </div>
-        <span class="badge badge-done">${escHtml(status)}</span>
       </div>
       <table class="result-table" aria-label="Результати ${escHtml(title)}">
         <thead><tr>${thCells}</tr></thead>

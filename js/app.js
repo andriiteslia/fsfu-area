@@ -229,10 +229,28 @@ function initRefreshButton() {
 }
 
 
+/* ── Row highlight (click to select) ───────────────────── */
+function initRowHighlight() {
+  document.getElementById('results-list')?.addEventListener('click', e => {
+    const row = e.target.closest('tbody tr');
+    if (!row) return;
+
+    const tbody = row.closest('tbody');
+    const wasActive = row.classList.contains('active');
+
+    // Deselect all rows in this table
+    tbody.querySelectorAll('tr.active').forEach(r => r.classList.remove('active'));
+
+    // Toggle: tap same row again → deselect
+    if (!wasActive) row.classList.add('active');
+  });
+}
+
 /* ── Boot ────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
   initTelegram();
   initTabs();
   initRefreshButton();
+  initRowHighlight();
   loadTabContent(state.activeTab);
 });
