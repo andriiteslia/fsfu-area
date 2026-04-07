@@ -191,7 +191,7 @@ button {
   box-shadow: 0 4px 24px rgba(0, 45, 110, 0.12), 0 1px 0 rgba(255,255,255,0.8) inset;
   border: 1px solid rgba(216, 227, 240, 0.7);
   overflow: hidden;
-  padding: 2px;
+  padding: 4px;
   gap: 2px;
 }
 
@@ -213,7 +213,8 @@ button {
   padding: 6px 8px;
   color: var(--c-text-sub);
   border-radius: 50px;
-  transition: background var(--t-fast), color var(--t-fast);
+  transition: background var(--t-fast), color var(--t-fast), transform 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav-btn.active {
@@ -221,9 +222,20 @@ button {
   color: var(--c-blue-main);
 }
 
+/* Press micro-interaction */
+.nav-btn:active {
+  transform: scale(0.88);
+  background: rgba(0, 91, 187, 0.14);
+}
+
+.nav-btn.active:active {
+  transform: scale(0.88);
+}
+
 .nav-icon {
-  font-size: 20px;
+  font-size: 17px;
   line-height: 1;
+  transition: transform 0.12s ease;
 }
 
 .nav-label {
@@ -266,7 +278,7 @@ button {
 }
 
 @media (min-width: 1024px) {
-  .tab { padding-top: 8px; }
+  .tab { padding-top: 2px; }
 }
 
 .tab.active { display: block; }
@@ -375,7 +387,7 @@ button {
 
 /* ── Results page title ────────────────────────────────── */
 .results-page-title {
-  padding: 4px 2px 12px;
+  padding: 0 2px 12px;
 }
 
 .results-page-title h2 {
