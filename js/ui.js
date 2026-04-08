@@ -368,6 +368,10 @@ function openDetailOverlay(parentItem, detailConfigs) {
     btn.disabled = true;
     btn.innerHTML = '<span class="btn-spinner"></span>';
 
+    // Remember which tab is active before reload
+    const activeChip = overlay.querySelector('#detail-chips .chip.active');
+    const activeDetailId = activeChip?.dataset.detailId || null;
+
     // Show skeleton while loading
     const body = overlay.querySelector('#detail-body');
     if (body) body.innerHTML = buildDetailSkeleton();
@@ -379,6 +383,16 @@ function openDetailOverlay(parentItem, detailConfigs) {
         detailItems.map(async item => ({ ...item, result: await fetchResults(item) }))
       );
       renderDetailContent(overlay, parentItem, withRows);
+
+      // Restore active tab after render
+      if (activeDetailId) {
+        overlay.querySelectorAll('#detail-chips .chip').forEach(c => {
+          c.classList.toggle('active', c.dataset.detailId === activeDetailId);
+        });
+        overlay.querySelectorAll('.detail-table-section').forEach(s => {
+          s.style.display = s.dataset.detailId === activeDetailId ? '' : 'none';
+        });
+      }
     } finally {
       setTimeout(() => {
         btn.disabled = false;
