@@ -229,30 +229,63 @@ async function loadTabContent(tabId) {
 async function openDetailPageById(parentItem) {
   const parentId = parentItem.id;
 
-  // Always fetch fresh config to ensure pageId/parentId fields are present
-  const allConfig = await fetchConfig();
-  state.allConfig = allConfig;
+  // Open overlay IMMEDIATELY — no waiting
+  const overlay = openDetailOverlay(parentItem, []);
 
-  const detailConfigs = allConfig.filter(c =>
-    (c.pageId === 'details') && c.parentId === parentId
-  );
-
-  console.log('[Detail] parentId:', parentId, '| detailConfigs:', detailConfigs.length, detailConfigs.map(c => c.id));
-
-  const overlay = openDetailOverlay(parentItem, detailConfigs);
-
-  // Load all detail tables
   try {
-    const withRows = await Promise.all(
-      detailConfigs.map(async item => {
-        const result = await fetchResults(item);
-        return { ...item, result };
-      })
+    // Fetch config and results in parallel
+    const allConfig = await fetchConfig();
+    state.allConfig = allConfig;
+
+    const detailConfigs = allConfig.filter(c =>
+      (c.pageId === 'details') && c.parentId === parentId
     );
-    // Render content into the already-open overlay
+
+    // Inject chips now that we have config
+    if (detailConfigs.length > 0) {
+      const chipsContainer = overlay.querySelector('#detail-chips');
+      if (chipsContainer) {
+        chipsContainer.innerHTML = detailConfigs.map((c, i) => `
+          <button class="chip${i === 0 ? ' active' : ''}" data-detail-id="${c.id}">
+            ${c.tag_title || c.title}
+          </button>`).join('');
+      } else {
+        // chips container wasn't rendered (empty detailConfigs passed) — insert it
+        const body = overlay.querySelector('#detail-body');
+        if (body) {
+          const chips = document.createElement('div');
+          chips.className = 'detail-filter-chips';
+          chips.id = 'detail-chips';
+          chips.innerHTML = detailConfigs.map((c, i) => `
+            <button class="chip${i === 0 ? ' active' : ''}" data-detail-id="${c.id}">
+              ${c.tag_title || c.title}
+            </button>`).join('');
+          body.before(chips);
+        }
+      }
+
+      // Re-attach chip click handler
+      overlay.querySelector('#detail-chips')?.addEventListener('click', e => {
+        const chip = e.target.closest('.chip');
+        if (!chip) return;
+        overlay.querySelectorAll('#detail-chips .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const id = chip.dataset.detailId;
+        overlay.querySelectorAll('.detail-table-section').forEach(s => {
+          s.style.display = s.dataset.detailId === id ? '' : 'none';
+        });
+      });
+    }
+
+    const withRows = await Promise.all(
+      detailConfigs.map(async item => ({ ...item, result: await fetchResults(item) }))
+    );
+
     renderDetailContent(overlay, parentItem, withRows);
   } catch (err) {
     console.error('[App] Failed to load detail results:', err);
+    const body = overlay.querySelector('#detail-body');
+    if (body) body.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити дані</p></div>`;
   }
 }
 
