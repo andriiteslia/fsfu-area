@@ -452,7 +452,7 @@ button {
 .result-card {
   background: var(--c-card);
   border-radius: var(--radius);
-  box-shadow: inset 0 0 0 1px #39527E;
+  box-shadow: 0 0 0 1px #39527E;
   overflow: hidden;
   display: flex; flex-direction: column;
 }
