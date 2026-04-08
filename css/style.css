@@ -509,13 +509,7 @@ button {
 .result-table { width: 100%; border-collapse: collapse; min-width: 320px; }
 
 /* Header cells — dark borders, no top/left/right outer borders */
-.result-table th {
-  border: 1px solid #545E71;
-  position: sticky;
-  top: calc(var(--header-h) + var(--app-top-pad));
-  z-index: 2;
-  background: var(--c-white); /* fallback if no inline bg from Sheets */
-}
+.result-table th { border: 1px solid #545E71; }
 .result-table thead tr:first-child th { border-top: none; }
 .result-table thead th:first-child { border-left: none; }
 .result-table thead th:last-child { border-right: none; }
@@ -899,10 +893,8 @@ button {
 }
 .detail-filter-chips::-webkit-scrollbar { display: none; }
 
-/* In detail overlay — sticky relative to detail header */
-.detail-scroll .result-table th {
-  top: 0;
-}
+/* Body */
+.detail-body {
   display: flex;
   flex-direction: column;
   gap: 12px;
