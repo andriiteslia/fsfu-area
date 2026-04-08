@@ -270,6 +270,31 @@ function renderResultCard(item) {
   `;
 }
 
+/**
+ * Builds a skeleton loading UI for the detail page table.
+ */
+function buildDetailSkeleton() {
+  const headerRow = `
+    <div class="skeleton-row">
+      <div class="skeleton-cell sk-place"></div>
+      <div class="skeleton-cell sk-header sk-name"></div>
+      ${[...Array(6)].map(() => '<div class="skeleton-cell sk-header sk-num"></div>').join('')}
+    </div>`;
+
+  const dataRows = [...Array(8)].map((_, i) => `
+    <div class="skeleton-row" style="opacity:${1 - i * 0.08}">
+      <div class="skeleton-cell sk-place"></div>
+      <div class="skeleton-cell sk-name" style="width:${55 + Math.random() * 25}%"></div>
+      ${[...Array(6)].map(() => '<div class="skeleton-cell sk-num"></div>').join('')}
+    </div>`).join('');
+
+  return `
+    <div class="skeleton-table">
+      ${headerRow}
+      ${dataRows}
+    </div>`;
+}
+
 /* ── Detail page ─────────────────────────────────────── */
 
 /**
@@ -309,10 +334,7 @@ function openDetailOverlay(parentItem, detailConfigs) {
         </div>
         ${tabsHtml}
         <div class="detail-body" id="detail-body">
-          <div class="detail-loading">
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-          </div>
+          ${buildDetailSkeleton()}
         </div>
       </div>
     </div>
@@ -342,6 +364,11 @@ function openDetailOverlay(parentItem, detailConfigs) {
     if (btn.disabled) return;
     btn.disabled = true;
     btn.innerHTML = '<span class="btn-spinner"></span>';
+
+    // Show skeleton while loading
+    const body = overlay.querySelector('#detail-body');
+    if (body) body.innerHTML = buildDetailSkeleton();
+
     try {
       const allConfig = await fetchConfig();
       const detailItems = allConfig.filter(c => c.pageId === 'details' && c.parentId === parentItem.id);

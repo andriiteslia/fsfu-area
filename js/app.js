@@ -298,6 +298,7 @@ function initRefreshButton() {
     if (btn.disabled) return;
     btn.disabled = true;
     btn.innerHTML = '<span class="btn-spinner"></span>';
+    showSkeleton('results-list', 2);
     try {
       state.resultsData = null;
       state.eventsData  = null;
