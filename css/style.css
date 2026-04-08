@@ -452,8 +452,7 @@ button {
 .result-card {
   background: var(--c-card);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid #464646;
+  box-shadow: inset 0 0 0 1px #39527E;
   overflow: hidden;
   display: flex; flex-direction: column;
 }
@@ -510,7 +509,7 @@ button {
 .result-table { width: 100%; border-collapse: collapse; min-width: 320px; }
 
 /* Header cells — dark borders */
-.result-table th { border: 1px solid #464646; }
+.result-table th { border: 1px solid #39527E; }
 
 /* Data cells — light borders */
 .result-table td { border: 1px solid #E1E1E1; }
