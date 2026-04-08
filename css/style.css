@@ -512,7 +512,7 @@ button {
 /* Uniform border on every cell — all sides, one color */
 .result-table th,
 .result-table td {
-  border: 1px solid #D8E3F0;
+  border: 1px solid #E1E1E1;
 }
 
 /* All th — minimal, Sheets inline styles drive the appearance */
@@ -532,15 +532,19 @@ button {
 .result-table th:last-child,
 .result-table td:last-child  { text-align: right; padding-right: 14px; }
 
-.result-table tbody tr { transition: background var(--t-fast); }
+.result-table tbody tr { transition: background var(--t-fast); cursor: pointer; }
 
 /* Zebra striping */
 .result-table tbody tr:nth-child(even) { background: #F4F8FF; }
 .result-table tbody tr:nth-child(odd)  { background: var(--c-white); }
 
-/* Click-to-highlight row */
-.result-table tbody tr        { cursor: pointer; }
-.result-table tbody tr.active { background: #D6E8FF !important; }
+/* Active row — stronger specificity to override zebra */
+.result-table tbody tr.active,
+.result-table tbody tr.active:nth-child(even),
+.result-table tbody tr.active:nth-child(odd) {
+  background: #D6E8FF;
+  box-shadow: inset 3px 0 0 0 var(--c-blue-main);
+}
 .result-table td              { padding: 7px 10px; vertical-align: middle; white-space: nowrap; }
 .result-table th              { white-space: nowrap; }
 
