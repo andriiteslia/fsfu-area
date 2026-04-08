@@ -229,14 +229,17 @@ async function loadTabContent(tabId) {
 async function openDetailPageById(parentItem) {
   const parentId = parentItem.id;
 
-  // Find detail items for this parent from config
-  const allConfig = state.allConfig || await fetchConfig();
+  // Always fetch fresh config to ensure pageId/parentId fields are present
+  const allConfig = await fetchConfig();
+  state.allConfig = allConfig;
+
   const detailConfigs = allConfig.filter(c =>
     (c.pageId === 'details') && c.parentId === parentId
   );
 
-  // Open the overlay immediately with loading state
-  const overlay = openDetailOverlay(parentItem, detailConfigs, null);
+  console.log('[Detail] parentId:', parentId, '| detailConfigs:', detailConfigs.length, detailConfigs.map(c => c.id));
+
+  const overlay = openDetailOverlay(parentItem, detailConfigs);
 
   // Load all detail tables
   try {
