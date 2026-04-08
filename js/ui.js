@@ -315,7 +315,7 @@ function openDetailOverlay(parentItem, detailConfigs) {
         </div>
       </div>
     </div>
-    <nav class="detail-bottom-nav">
+    <nav class="detail-bottom-nav" style="display:none">
       <div class="nav-inner">
         <button class="detail-back-nav-btn nav-btn active">
           <span class="nav-icon">←</span>
