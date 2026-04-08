@@ -341,6 +341,7 @@ function openDetailOverlay(parentItem, detailConfigs) {
     const btn = overlay.querySelector('.detail-refresh-btn');
     if (btn.disabled) return;
     btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner"></span>';
     try {
       const allConfig = await fetchConfig();
       const detailItems = allConfig.filter(c => c.pageId === 'details' && c.parentId === parentItem.id);
@@ -349,7 +350,10 @@ function openDetailOverlay(parentItem, detailConfigs) {
       );
       renderDetailContent(overlay, parentItem, withRows);
     } finally {
-      setTimeout(() => { btn.disabled = false; }, 600);
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Оновити';
+      }, 600);
     }
   });
 

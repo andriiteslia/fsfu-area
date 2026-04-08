@@ -264,6 +264,7 @@ function initRefreshButton() {
   btn.addEventListener('click', async () => {
     if (btn.disabled) return;
     btn.disabled = true;
+    btn.innerHTML = '<span class="btn-spinner"></span>';
     try {
       state.resultsData = null;
       state.eventsData  = null;
@@ -271,7 +272,10 @@ function initRefreshButton() {
       state.allConfig   = null;
       await loadTabContent(state.activeTab);
     } finally {
-      setTimeout(() => { btn.disabled = false; }, 600);
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Оновити';
+      }, 600);
     }
   });
 }
