@@ -100,7 +100,7 @@ function parseDividers(divStr) {
  * Column 1 = place (#), column 2 = first data cell, etc.
  */
 function divClass(dividers, colNum) {
-  return dividers.has(colNum) ? ' style="box-shadow:inset -2px 0 0 0 #39527E"' : '';
+  return dividers.has(colNum) ? ' style="border-right:1px solid #39527E"' : '';
 }
 
 /**
@@ -121,6 +121,8 @@ function renderRichTable(result, divSet, previewCount) {
     const tag        = isHeader ? 'th' : 'td';
     const endCol     = cell.col + cell.cs;
     const hasDivider = divSet.has(endCol);
+    // Is this cell immediately after a config divider column?
+    const afterDivider = divSet.has(cell.col);
 
     const style = [];
     if (cell.bg) style.push('background-color:' + cell.bg);
@@ -128,7 +130,8 @@ function renderRichTable(result, divSet, previewCount) {
     if (cell.b && !isHeader) style.push('font-weight:700');
     if (cell.a === 'center') style.push('text-align:center');
     if (cell.a === 'right')  style.push('text-align:right');
-    if (hasDivider) style.push('box-shadow:inset -2px 0 0 0 #39527E');
+    if (hasDivider)    style.push('border-right:1px solid #39527E');
+    if (afterDivider)  style.push('border-left:none');
 
     const attrs = [];
     if (cell.cs > 1) attrs.push('colspan="' + cell.cs + '"');
