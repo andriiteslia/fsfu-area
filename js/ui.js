@@ -605,20 +605,39 @@ function renderCalendar(events) {
 /**
  * Renders a region accordion item.
  */
-function renderRegionItem(region) {
-  const members = region.teams.map(t =>
-    `<span class="member-tag">${escHtml(t)}</span>`
-  ).join('');
+/**
+ * Renders a single federation card.
+ */
+function renderFederationCard(fed) {
+  const avatar = fed.photoUrl
+    ? `<img src="${escHtml(fed.photoUrl)}" class="fed-avatar" alt="${escHtml(fed.short || fed.name)}" onerror="this.style.display='none'">`
+    : `<div class="fed-avatar fed-avatar-placeholder">${escHtml((fed.short || fed.name).charAt(0))}</div>`;
+
+  const captainHtml = fed.captain
+    ? `<div class="fed-captain">👤 Капітан: <strong>${escHtml(fed.captain)}</strong></div>` : '';
+
+  const membersHtml = fed.members?.length
+    ? `<div class="fed-members">${fed.members.map(m => `<span class="member-tag">${escHtml(m)}</span>`).join('')}</div>` : '';
+
+  const linksHtml = [
+    fed.phone ? `<a href="tel:${escHtml(fed.phone)}"    class="fed-link">📞 ${escHtml(fed.phone)}</a>` : '',
+    fed.email ? `<a href="mailto:${escHtml(fed.email)}" class="fed-link">📧 ${escHtml(fed.email)}</a>` : '',
+  ].filter(Boolean).join('');
+
+  const hasBody = captainHtml || membersHtml || linksHtml;
 
   return `
-    <div class="region-item">
-      <div class="region-header" role="button" tabindex="0">
-        <span class="region-name">🗺️ ${escHtml(region.name)}</span>
-        <span class="region-arrow">▼</span>
+    <div class="fed-card">
+      <div class="fed-header" role="button" tabindex="0">
+        ${avatar}
+        <div class="fed-info">
+          <div class="fed-name">${escHtml(fed.name)}</div>
+          ${fed.region ? `<div class="fed-region">${escHtml(fed.region)}</div>` : ''}
+        </div>
+        ${hasBody ? '<span class="fed-arrow">▼</span>' : ''}
       </div>
-      <div class="region-members">${members}</div>
-    </div>
-  `;
+      ${hasBody ? `<div class="fed-body">${captainHtml}${membersHtml}${linksHtml}</div>` : ''}
+    </div>`;
 }
 
 /**
@@ -628,10 +647,10 @@ function renderAbout(about) {
   const container = document.getElementById('about-content');
   if (!container) return;
 
-  // Contact rows
-  const contactRows = about.contacts.map(c => {
+  // Contact rows (hardcoded)
+  const contactRows = (about.contacts || []).map(c => {
     const val = c.url
-      ? `<a href="${escHtml(c.url)}" style="color:var(--c-blue-main)">${escHtml(c.value)}</a>`
+      ? `<a href="${escHtml(c.url)}"${c.url.startsWith('http') ? ' target="_blank"' : ''} style="color:var(--c-blue-main)">${escHtml(c.value)}</a>`
       : escHtml(c.value);
     return `
       <div class="info-row">
@@ -643,25 +662,28 @@ function renderAbout(about) {
       </div>`;
   }).join('');
 
-  // Region accordion
-  const regionItems = about.regions.map(renderRegionItem).join('');
+  // Federations from API
+  const federations = about.federations || [];
+  const fedHtml = federations.length
+    ? federations.map(renderFederationCard).join('')
+    : `<div class="empty-state"><div class="empty-state-icon">🏛️</div><p>Дані федерацій завантажуються...</p></div>`;
 
   container.innerHTML = `
-    <div class="about-cols">
-      <div class="about-col-left">
-        <div class="section-label">Контакти</div>
-        <div class="info-card">${contactRows}</div>
-      </div>
-      <div class="about-col-right">
-        <div class="section-label">Обласні федерації</div>
-        <div class="region-list">${regionItems}</div>
-      </div>
+    <div class="about-section">
+      <div class="section-label">Контакти</div>
+      <div class="info-card">${contactRows}</div>
+    </div>
+    <div class="about-section">
+      <div class="section-label">Обласні федерації</div>
+      <div class="fed-list">${fedHtml}</div>
     </div>
   `;
 
-  // Attach accordion toggle
-  container.querySelectorAll('.region-header').forEach(header => {
-    const toggle = () => header.closest('.region-item').classList.toggle('open');
+  // Accordion toggle
+  container.querySelectorAll('.fed-header').forEach(header => {
+    const card = header.closest('.fed-card');
+    if (!card.querySelector('.fed-body')) return;
+    const toggle = () => card.classList.toggle('open');
     header.addEventListener('click', toggle);
     header.addEventListener('keydown', e => {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }

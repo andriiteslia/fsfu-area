@@ -163,8 +163,12 @@ async function fetchAbout() {
   if (API_CONFIG.USE_MOCK) {
     return ABOUT_INFO;
   }
-
-  return apiFetch('getAbout');
+  // Merge hardcoded contacts with API federations
+  const apiData = await apiFetch('getAbout');
+  return {
+    contacts:     ABOUT_INFO.contacts,
+    federations:  apiData.federations || [],
+  };
 }
 
 /* ── Switch to live mode ─────────────────────────────────── */

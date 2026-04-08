@@ -83,23 +83,13 @@ const MOCK_EVENTS = [
 const ABOUT_INFO = {
   contacts: [
     { icon: '🏛️', label: 'Адреса',  value: 'м. Полтава, вул. Соборності 77, оф. 2' },
-    { icon: '📞', label: 'Телефон', value: '(095) 481-64-64' },
-    { icon: '📧', label: 'Email',   value: 'fsfu2020@gmail.com' },
+    { icon: '📞', label: 'Телефон', value: '(095) 481-64-64', url: 'tel:+380954816464' },
+    { icon: '📧', label: 'Email',   value: 'fsfu2020@gmail.com', url: 'mailto:fsfu2020@gmail.com' },
     { icon: '🌐', label: 'Вебсайт', value: 'fsfu.com.ua', url: 'https://fsfu.com.ua' },
+    { icon: '📸', label: 'Instagram', value: '@fsfu_area', url: 'https://instagram.com/fsfu_area' },
+    { icon: '💬', label: 'Telegram', value: 'ФРСУ AREA', url: 'https://t.me/fsfu_area' },
   ],
-  regions: [
-    { name: 'Івано-Франківська обл.',   teams: ['Карпатська форель', 'Буковельська форель', 'Яремче AREA'] },
-    { name: 'Львівська обл.',           teams: ['Галичина Спорт', 'Львів AREA Club'] },
-    { name: 'Чернівецька обл.',         teams: ['Буковинські риболови', 'Буковина Спорт'] },
-    { name: 'Тернопільська обл.',       teams: ['Тернопіль AREA'] },
-    { name: 'Закарпатська обл.',        teams: ['Закарпаття Форель'] },
-    { name: 'Волинська обл.',           teams: ['Поліська сімка', 'Луцьк Риболов'] },
-    { name: 'м. Київ',                  teams: ['Київ AREA Club'] },
-    { name: 'Харківська обл.',          teams: ['Харків Спінер', 'Харків AREA'] },
-    { name: 'Дніпропетровська обл.',    teams: ['Дніпро-Риболов'] },
-    { name: 'Черкаська обл.',           teams: ['Черкаси AREA'] },
-    { name: 'Полтавська обл.',          teams: ['Полтава Рибак'] },
-  ],
+  federations: [],  // loaded from config sheet
 };
 
 /* ── Mock data above is consumed by api.js (USE_MOCK mode) ── */
