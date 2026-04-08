@@ -452,7 +452,7 @@ button {
 .result-card {
   background: var(--c-card);
   border-radius: var(--radius);
-  box-shadow: 0 0 0 1px #39527E;
+  box-shadow: 0 0 0 1px #545E71;
   overflow: hidden;
   display: flex; flex-direction: column;
 }
@@ -509,7 +509,7 @@ button {
 .result-table { width: 100%; border-collapse: collapse; min-width: 320px; }
 
 /* Header cells — dark borders */
-.result-table th { border: 1px solid #39527E; }
+.result-table th { border: 1px solid #545E71; }
 
 /* Data cells — light borders */
 .result-table td { border: 1px solid #E1E1E1; }
@@ -750,7 +750,7 @@ button {
   font-weight: 700;
   color: var(--c-blue-main);
   background: var(--c-blue-pale);
-  border-top: 1px solid var(--c-border);
+  border-top: 1px solid #545E71;
   cursor: pointer;
   transition: background var(--t-fast);
 }
