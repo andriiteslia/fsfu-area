@@ -147,9 +147,10 @@ button {
 }
 
 /* Refresh button */
-.header-refresh-btn {
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
+.header-refresh-btn,
+.detail-refresh-btn {
+  padding: 6px 16px;
+  border-radius: 50px;
   background: rgba(255, 255, 255, 0.12);
   color: var(--c-white);
   font-family: 'DM Sans', sans-serif;
@@ -158,11 +159,18 @@ button {
   letter-spacing: 0.3px;
   flex-shrink: 0;
   transition: background var(--t-fast);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
 }
 
-.header-refresh-btn:hover  { background: rgba(255, 255, 255, 0.22); }
-.header-refresh-btn:active { background: rgba(255, 255, 255, 0.32); }
+.header-refresh-btn:hover,
+.detail-refresh-btn:hover  { background: rgba(255, 255, 255, 0.22); }
+
+.header-refresh-btn:active,
+.detail-refresh-btn:active { background: rgba(255, 255, 255, 0.32); }
+
+.header-refresh-btn:disabled,
+.detail-refresh-btn:disabled { opacity: 0.5; }
 
 /* ════════════════════════════════════════════════════════
    NAVIGATION
