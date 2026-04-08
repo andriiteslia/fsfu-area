@@ -945,6 +945,46 @@ button {
   border-radius: var(--radius-sm);
 }
 
+/* Card-level skeleton — header block */
+.skeleton-card {
+  background: linear-gradient(90deg, #e4ecf7 25%, #f0f5fc 50%, #e4ecf7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--radius);
+  height: 72px;
+}
+
+/* Table skeleton rows */
+.skeleton-table {
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--c-border);
+  align-items: center;
+}
+
+.skeleton-row:last-child { border-bottom: none; }
+
+.skeleton-cell {
+  background: linear-gradient(90deg, #e4ecf7 25%, #f0f5fc 50%, #e4ecf7 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 4px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.skeleton-cell.sk-place  { width: 26px; height: 26px; border-radius: 50%; }
+.skeleton-cell.sk-name   { flex: 1; }
+.skeleton-cell.sk-num    { width: 32px; }
+.skeleton-cell.sk-header { height: 10px; }
+
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
