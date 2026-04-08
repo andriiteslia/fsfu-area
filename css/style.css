@@ -453,7 +453,7 @@ button {
   background: var(--c-card);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--c-border);
+  border: 1px solid #464646;
   overflow: hidden;
   display: flex; flex-direction: column;
 }
@@ -509,11 +509,11 @@ button {
 /* Results table */
 .result-table { width: 100%; border-collapse: collapse; min-width: 320px; }
 
-/* Uniform border on every cell — all sides, one color */
-.result-table th,
-.result-table td {
-  border: 1px solid #E1E1E1;
-}
+/* Header cells — dark borders */
+.result-table th { border: 1px solid #464646; }
+
+/* Data cells — light borders */
+.result-table td { border: 1px solid #E1E1E1; }
 
 /* All th — minimal, Sheets inline styles drive the appearance */
 .result-table th {
