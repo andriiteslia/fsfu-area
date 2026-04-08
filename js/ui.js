@@ -100,7 +100,7 @@ function parseDividers(divStr) {
  * Column 1 = place (#), column 2 = first data cell, etc.
  */
 function divClass(dividers, colNum) {
-  return dividers.has(colNum) ? ' style="border-right:2px solid #D8E3F0"' : '';
+  return dividers.has(colNum) ? ' style="border-right:1px solid #464646"' : '';
 }
 
 /**
@@ -128,7 +128,7 @@ function renderRichTable(result, divSet, previewCount) {
     if (cell.b && !isHeader) style.push('font-weight:700');
     if (cell.a === 'center') style.push('text-align:center');
     if (cell.a === 'right')  style.push('text-align:right');
-    if (hasDivider) style.push('border-right:2px solid #D8E3F0');
+    if (hasDivider) style.push('border-right:1px solid #464646');
 
     const attrs = [];
     if (cell.cs > 1) attrs.push('colspan="' + cell.cs + '"');
@@ -466,15 +466,8 @@ function renderDetailContent(overlay, parentItem, detailItems) {
       </div>`;
   }).join('');
 
-  // Row highlight
-  body.addEventListener('click', e => {
-    const row = e.target.closest('tbody tr');
-    if (!row) return;
-    const tbody = row.closest('tbody');
-    const wasActive = row.classList.contains('active');
-    tbody.querySelectorAll('tr.active').forEach(r => r.classList.remove('active'));
-    if (!wasActive) row.classList.add('active');
-  });
+  // Row highlight — reuse global handler
+  body.addEventListener('click', handleRowClick);
 }
 
 /**
