@@ -280,11 +280,12 @@ function openDetailOverlay(parentItem, detailConfigs) {
 
   const { title, dateDisplay, location } = parentItem;
   const hasTabs = detailConfigs.length > 1;
+  const hasAnyTabs = detailConfigs.length >= 1;
 
-  const tabsHtml = hasTabs ? `
+  const tabsHtml = hasAnyTabs ? `
     <div class="detail-filter-chips" id="detail-chips">
       ${detailConfigs.map((c, i) => `
-        <button class="filter-chip${i === 0 ? ' active' : ''}" data-detail-id="${escHtml(c.id)}">
+        <button class="chip${i === 0 ? ' active' : ''}" data-detail-id="${escHtml(c.id)}">
           ${escHtml(c.tag_title || c.title)}
         </button>`).join('')}
     </div>` : '';
@@ -360,11 +361,11 @@ function openDetailOverlay(parentItem, detailConfigs) {
   }
 
   // Tab chips
-  if (hasTabs) {
+  if (hasAnyTabs) {
     overlay.querySelector('#detail-chips')?.addEventListener('click', e => {
-      const chip = e.target.closest('.filter-chip');
+      const chip = e.target.closest('.chip');
       if (!chip) return;
-      overlay.querySelectorAll('#detail-chips .filter-chip').forEach(c => c.classList.remove('active'));
+      overlay.querySelectorAll('#detail-chips .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       const id = chip.dataset.detailId;
       overlay.querySelectorAll('.detail-table-section').forEach(s => {
@@ -394,7 +395,6 @@ function renderDetailContent(overlay, parentItem, detailItems) {
   }
 
   const hasTabs = detailItems.length > 1;
-  const firstId = detailItems[0]?.id;
 
   body.innerHTML = detailItems.map((item, i) => {
     const divSet = parseDividers(item.dividers);
