@@ -270,24 +270,17 @@ function renderResultCard(item) {
   `;
 }
 
-/* ── Detail page ─────────────────────────────────────────── */
+/* ── Detail page ─────────────────────────────────────── */
 
 /**
- * Creates and shows the detail overlay immediately.
- * Content is populated later via renderDetailContent().
+ * Creates and shows the detail overlay as a full standalone page.
  */
-function openDetailOverlay(parentItem, detailConfigs, _unused) {
-  // Remove existing overlay if any
+function openDetailOverlay(parentItem, detailConfigs) {
   document.querySelector('.detail-overlay')?.remove();
 
   const { title, dateDisplay, location } = parentItem;
-
-  const overlay = document.createElement('div');
-  overlay.className = 'detail-overlay';
-  overlay.dataset.parentId = parentItem.id;
-
-  // Build filter tabs from detailConfigs
   const hasTabs = detailConfigs.length > 1;
+
   const tabsHtml = hasTabs ? `
     <div class="detail-filter-chips" id="detail-chips">
       ${detailConfigs.map((c, i) => `
@@ -296,63 +289,82 @@ function openDetailOverlay(parentItem, detailConfigs, _unused) {
         </button>`).join('')}
     </div>` : '';
 
+  const overlay = document.createElement('div');
+  overlay.className = 'detail-overlay';
+  overlay.dataset.parentId = parentItem.id;
   overlay.innerHTML = `
-    <div class="detail-page">
-      <div class="detail-header-card">
-        <div class="detail-header-info">
+    <div class="detail-page-header">
+      <div class="detail-page-header-inner">
+        <button class="detail-back-btn" aria-label="Назад">← Назад</button>
+        <div class="detail-page-header-spacer"></div>
+        <button class="detail-refresh-btn" aria-label="Оновити">Оновити</button>
+      </div>
+    </div>
+    <div class="detail-scroll">
+      <div class="detail-page">
+        <div class="detail-header-card">
           <h2>${escHtml(title)}</h2>
           <p>${escHtml(location)} &nbsp;·&nbsp; ${escHtml(dateDisplay)}</p>
         </div>
-      </div>
-      ${tabsHtml}
-      <div class="detail-body" id="detail-body">
-        <div class="detail-loading">Завантаження...</div>
+        ${tabsHtml}
+        <div class="detail-body" id="detail-body">
+          <div class="detail-loading">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+        </div>
       </div>
     </div>
+    <nav class="detail-bottom-nav">
+      <div class="nav-inner">
+        <button class="detail-back-nav-btn nav-btn active">
+          <span class="nav-icon">←</span>
+          <span class="nav-label">Назад</span>
+        </button>
+      </div>
+    </nav>
   `;
-
-  // Header back button — swap logo with ← Назад
-  const header = document.querySelector('.header');
-  const logoEl  = header?.querySelector('.header-logo-rec');
-  if (logoEl) logoEl.style.display = 'none';
-
-  let backBtn = header?.querySelector('.header-back-btn');
-  if (!backBtn && header) {
-    backBtn = document.createElement('button');
-    backBtn.className = 'header-back-btn';
-    backBtn.innerHTML = '← Назад';
-    header.querySelector('.header-inner')?.prepend(backBtn);
-  }
-  if (backBtn) backBtn.style.display = '';
 
   const closeOverlay = () => {
     overlay.classList.add('detail-overlay--closing');
-    overlay.addEventListener('animationend', () => {
-      overlay.remove();
-      // Restore logo
-      if (logoEl) logoEl.style.display = '';
-      if (backBtn) backBtn.style.display = 'none';
-    }, { once: true });
+    overlay.addEventListener('animationend', () => overlay.remove(), { once: true });
     window.Telegram?.WebApp?.BackButton?.hide();
   };
 
-  backBtn?.addEventListener('click', closeOverlay);
+  // Back buttons
+  overlay.querySelector('.detail-back-btn').addEventListener('click', closeOverlay);
+  overlay.querySelector('.detail-back-nav-btn').addEventListener('click', closeOverlay);
 
-  // Telegram back button
+  // Refresh
+  overlay.querySelector('.detail-refresh-btn').addEventListener('click', async () => {
+    const btn = overlay.querySelector('.detail-refresh-btn');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    try {
+      const allConfig = await fetchConfig();
+      const detailItems = allConfig.filter(c => c.pageId === 'details' && c.parentId === parentItem.id);
+      const withRows = await Promise.all(
+        detailItems.map(async item => ({ ...item, result: await fetchResults(item) }))
+      );
+      renderDetailContent(overlay, parentItem, withRows);
+    } finally {
+      setTimeout(() => { btn.disabled = false; }, 600);
+    }
+  });
+
+  // TG back button
   const tg = window.Telegram?.WebApp;
   if (tg?.BackButton) {
     tg.BackButton.show();
     tg.BackButton.onClick(closeOverlay);
   }
 
-  document.body.appendChild(overlay);
-
-  // Filter chip switching
+  // Tab chips
   if (hasTabs) {
     overlay.querySelector('#detail-chips')?.addEventListener('click', e => {
       const chip = e.target.closest('.filter-chip');
       if (!chip) return;
-      overlay.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      overlay.querySelectorAll('#detail-chips .filter-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       const id = chip.dataset.detailId;
       overlay.querySelectorAll('.detail-table-section').forEach(s => {
@@ -361,6 +373,7 @@ function openDetailOverlay(parentItem, detailConfigs, _unused) {
     });
   }
 
+  document.body.appendChild(overlay);
   return overlay;
 }
 
@@ -371,20 +384,46 @@ function renderDetailContent(overlay, parentItem, detailItems) {
   const body = overlay.querySelector('#detail-body');
   if (!body) return;
 
+  if (!detailItems || detailItems.length === 0) {
+    body.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🎣</div>
+        <p>Даних поки немає</p>
+      </div>`;
+    return;
+  }
+
   const hasTabs = detailItems.length > 1;
   const firstId = detailItems[0]?.id;
 
   body.innerHTML = detailItems.map((item, i) => {
     const divSet = parseDividers(item.dividers);
     let tableHtml;
+
     if (item.result?.type === 'rich') {
-      const { thead, tbody } = renderRichTable(item.result, divSet, null);
-      tableHtml = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
-    } else {
-      tableHtml = '<tbody><tr><td>Немає даних</td></tr></tbody>';
+      const rows = item.result.rows || [];
+      if (rows.filter(r => !r.h).length === 0) {
+        // Has headers but no data rows
+        tableHtml = null;
+      } else {
+        const { thead, tbody } = renderRichTable(item.result, divSet, null);
+        tableHtml = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
+      }
     }
 
     const visible = !hasTabs || i === 0;
+
+    if (!tableHtml) {
+      return `
+        <div class="detail-table-section" data-detail-id="${escHtml(item.id)}"
+             style="${visible ? '' : 'display:none'}">
+          <div class="empty-state">
+            <div class="empty-state-icon">🎣</div>
+            <p>Даних поки немає</p>
+          </div>
+        </div>`;
+    }
+
     return `
       <div class="detail-table-section" data-detail-id="${escHtml(item.id)}"
            style="${visible ? '' : 'display:none'}">

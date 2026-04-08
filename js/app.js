@@ -261,21 +261,7 @@ function initRefreshButton() {
   btn.addEventListener('click', async () => {
     if (btn.disabled) return;
     btn.disabled = true;
-
     try {
-      // If detail page is open — reload it
-      const overlay = document.querySelector('.detail-overlay');
-      if (overlay) {
-        const parentId = overlay.dataset.parentId;
-        const parentItem = state.resultsData?.find(i => i.id === parentId);
-        if (parentItem) {
-          state.allConfig = null;
-          await openDetailPageById(parentItem);
-        }
-        btn.disabled = false;
-        return;
-      }
-
       state.resultsData = null;
       state.eventsData  = null;
       state.aboutData   = null;
