@@ -857,12 +857,15 @@ button {
   color: rgba(255,255,255,0.60);
 }
 
-/* Filter chips */
+/* Filter chips — same as chips-wrap on results page */
 .detail-filter-chips {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
 }
+.detail-filter-chips::-webkit-scrollbar { display: none; }
 
 /* Body */
 .detail-body {
