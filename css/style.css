@@ -73,7 +73,7 @@
 html { -webkit-text-size-adjust: 100%; }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   font-size: 14px;
   line-height: 1.5;
   background: var(--c-bg);
@@ -153,7 +153,7 @@ button {
   border-radius: 50px;
   background: rgba(255, 255, 255, 0.12);
   color: var(--c-white);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -518,7 +518,7 @@ button {
 /* All th — minimal, Sheets inline styles drive the appearance */
 .result-table th {
   padding: 6px 8px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   font-size: 11px;
   font-weight: 600;
   color: var(--c-text);
@@ -742,7 +742,7 @@ button {
   justify-content: space-between;
   width: 100%;
   padding: 13px 16px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   font-size: 13px;
   font-weight: 700;
   color: var(--c-blue-main);
@@ -812,7 +812,7 @@ button {
 @media (min-width: 1024px) { .detail-page-header-inner { padding: 0 var(--pad-desktop); } }
 
 .detail-back-btn {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   font-size: 13px; font-weight: 700;
   color: var(--c-gold);
   cursor: pointer;
@@ -823,7 +823,7 @@ button {
 .detail-page-header-spacer { flex: 1; }
 
 .detail-refresh-btn {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter Tight', sans-serif;
   font-size: 12px; font-weight: 700;
   color: var(--c-white);
   border: 1.5px solid rgba(255,255,255,0.35);
