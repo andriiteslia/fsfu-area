@@ -100,7 +100,7 @@ function parseDividers(divStr) {
  * Column 1 = place (#), column 2 = first data cell, etc.
  */
 function divClass(dividers, colNum) {
-  return dividers.has(colNum) ? ' style="border-right:1px solid #39527E"' : '';
+  return dividers.has(colNum) ? ' style="border-right:1px solid #545E71"' : '';
 }
 
 /**
@@ -130,7 +130,7 @@ function renderRichTable(result, divSet, previewCount) {
     if (cell.b && !isHeader) style.push('font-weight:700');
     if (cell.a === 'center') style.push('text-align:center');
     if (cell.a === 'right')  style.push('text-align:right');
-    if (hasDivider)    style.push('border-right:1px solid #39527E');
+    if (hasDivider)    style.push('border-right:1px solid #545E71');
     if (afterDivider)  style.push('border-left:none');
 
     const attrs = [];
