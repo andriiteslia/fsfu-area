@@ -12,9 +12,11 @@
 const state = {
   activeTab:     'results',
   resultFilter:  'all',
-  resultsData:   null,
+  allConfig:     null,   // all items from config (results + details)
+  resultsData:   null,   // items with page_id=results + loaded result
   eventsData:    null,
   aboutData:     null,
+  detailPage:    null,   // currently open detail overlay
 };
 
 /* ── Telegram WebApp ────────────────────────────────────── */
@@ -174,30 +176,26 @@ async function loadTabContent(tabId) {
     showSkeleton('results-list', 2);
     try {
       const config = await fetchConfig();
-      const visible = config.filter(c => c.visible !== false);
+      state.allConfig = config;
 
+      // Load results-page cards
+      const resultsItems = config.filter(c => (c.pageId || 'results') === 'results');
       const withRows = await Promise.all(
-        visible.map(async item => {
+        resultsItems.map(async item => {
           const result = await fetchResults(item);
-          console.log('[Debug] fetchResults for', item.id,
-            '→ type:', result?.type,
-            '| headerRows:', result?.headerRows,
-            '| rows count:', result?.rows?.length,
-            '| dividers:', item.dividers
-          );
           return { ...item, result };
         })
       );
-
       state.resultsData = withRows;
 
-      // Build filter chips dynamically from tags in config
       renderFilterChips(state.resultsData, state.resultFilter, (newFilter) => {
         state.resultFilter = newFilter;
         renderResults(state.resultsData, state.resultFilter);
+        initDetailButtons(state.resultsData, openDetailPageById);
       });
 
       renderResults(state.resultsData, state.resultFilter);
+      initDetailButtons(state.resultsData, openDetailPageById);
     } catch (err) {
       console.error('[App] Failed to load results:', err);
       document.getElementById('results-list').innerHTML =
@@ -227,6 +225,34 @@ async function loadTabContent(tabId) {
   }
 }
 
+/* ── Detail page ─────────────────────────────────────────── */
+async function openDetailPageById(parentItem) {
+  const parentId = parentItem.id;
+
+  // Find detail items for this parent from config
+  const allConfig = state.allConfig || await fetchConfig();
+  const detailConfigs = allConfig.filter(c =>
+    (c.pageId === 'details') && c.parentId === parentId
+  );
+
+  // Open the overlay immediately with loading state
+  const overlay = openDetailOverlay(parentItem, detailConfigs, null);
+
+  // Load all detail tables
+  try {
+    const withRows = await Promise.all(
+      detailConfigs.map(async item => {
+        const result = await fetchResults(item);
+        return { ...item, result };
+      })
+    );
+    // Render content into the already-open overlay
+    renderDetailContent(overlay, parentItem, withRows);
+  } catch (err) {
+    console.error('[App] Failed to load detail results:', err);
+  }
+}
+
 /* ── Refresh button ─────────────────────────────────────── */
 function initRefreshButton() {
   const btn = document.getElementById('refreshBtn');
@@ -237,9 +263,23 @@ function initRefreshButton() {
     btn.disabled = true;
 
     try {
+      // If detail page is open — reload it
+      const overlay = document.querySelector('.detail-overlay');
+      if (overlay) {
+        const parentId = overlay.dataset.parentId;
+        const parentItem = state.resultsData?.find(i => i.id === parentId);
+        if (parentItem) {
+          state.allConfig = null;
+          await openDetailPageById(parentItem);
+        }
+        btn.disabled = false;
+        return;
+      }
+
       state.resultsData = null;
       state.eventsData  = null;
       state.aboutData   = null;
+      state.allConfig   = null;
       await loadTabContent(state.activeTab);
     } finally {
       setTimeout(() => { btn.disabled = false; }, 600);

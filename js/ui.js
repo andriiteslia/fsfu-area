@@ -270,87 +270,152 @@ function renderResultCard(item) {
   `;
 }
 
-/* ── Detail page (full results) ──────────────────────────── */
+/* ── Detail page ─────────────────────────────────────────── */
 
 /**
- * Opens a full-screen detail view for one competition.
+ * Creates and shows the detail overlay immediately.
+ * Content is populated later via renderDetailContent().
  */
-function openDetailPage(item) {
-  const { title, dateDisplay, location, result } = item;
-  const divSet = parseDividers(item.dividers);
+function openDetailOverlay(parentItem, detailConfigs, _unused) {
+  // Remove existing overlay if any
+  document.querySelector('.detail-overlay')?.remove();
 
-  let tableHtml;
-  if (result?.type === 'rich') {
-    const { thead, tbody } = renderRichTable(result, divSet, null);
-    tableHtml = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
-  } else {
-    const rows = result?.rows || [];
-    const renderRow = row => `
-      <tr>
-        <td><span class="place ${placeClass(row.place)}">${row.place}</span></td>
-        ${(row.cells || []).map(cell =>
-          `<td>${escHtml(String(cell ?? ''))}</td>`
-        ).join('')}
-      </tr>`;
-    tableHtml = buildThead(result, divSet)
-              + `<tbody>${rows.map(renderRow).join('')}</tbody>`;
-  }
+  const { title, dateDisplay, location } = parentItem;
+
   const overlay = document.createElement('div');
   overlay.className = 'detail-overlay';
+  overlay.dataset.parentId = parentItem.id;
+
+  // Build filter tabs from detailConfigs
+  const hasTabs = detailConfigs.length > 1;
+  const tabsHtml = hasTabs ? `
+    <div class="detail-filter-chips" id="detail-chips">
+      ${detailConfigs.map((c, i) => `
+        <button class="filter-chip${i === 0 ? ' active' : ''}" data-detail-id="${escHtml(c.id)}">
+          ${escHtml(c.tag_title || c.title)}
+        </button>`).join('')}
+    </div>` : '';
+
   overlay.innerHTML = `
     <div class="detail-page">
-      <div class="detail-header">
-        <button class="detail-back" aria-label="Назад">← Назад</button>
+      <div class="detail-header-card">
         <div class="detail-header-info">
           <h2>${escHtml(title)}</h2>
           <p>${escHtml(location)} &nbsp;·&nbsp; ${escHtml(dateDisplay)}</p>
         </div>
       </div>
-      <div class="detail-body">
-        <div class="result-table-wrap">
-          <table class="result-table detail-table">${tableHtml}</table>
-        </div>
+      ${tabsHtml}
+      <div class="detail-body" id="detail-body">
+        <div class="detail-loading">Завантаження...</div>
       </div>
     </div>
   `;
 
-  // Close on back button
-  overlay.querySelector('.detail-back').addEventListener('click', () => {
-    overlay.classList.add('detail-overlay--closing');
-    overlay.addEventListener('animationend', () => overlay.remove(), { once: true });
-  });
+  // Header back button — swap logo with ← Назад
+  const header = document.querySelector('.header');
+  const logoEl  = header?.querySelector('.header-logo-rec');
+  if (logoEl) logoEl.style.display = 'none';
 
-  // Telegram back button support
+  let backBtn = header?.querySelector('.header-back-btn');
+  if (!backBtn && header) {
+    backBtn = document.createElement('button');
+    backBtn.className = 'header-back-btn';
+    backBtn.innerHTML = '← Назад';
+    header.querySelector('.header-inner')?.prepend(backBtn);
+  }
+  if (backBtn) backBtn.style.display = '';
+
+  const closeOverlay = () => {
+    overlay.classList.add('detail-overlay--closing');
+    overlay.addEventListener('animationend', () => {
+      overlay.remove();
+      // Restore logo
+      if (logoEl) logoEl.style.display = '';
+      if (backBtn) backBtn.style.display = 'none';
+    }, { once: true });
+    window.Telegram?.WebApp?.BackButton?.hide();
+  };
+
+  backBtn?.addEventListener('click', closeOverlay);
+
+  // Telegram back button
   const tg = window.Telegram?.WebApp;
   if (tg?.BackButton) {
     tg.BackButton.show();
-    tg.BackButton.onClick(() => {
-      overlay.querySelector('.detail-back').click();
-      tg.BackButton.hide();
-    });
+    tg.BackButton.onClick(closeOverlay);
   }
 
   document.body.appendChild(overlay);
-  // Row highlight inside detail page
-  overlay.querySelector('tbody').addEventListener('click', e => {
-    const row = e.target.closest('tr');
+
+  // Filter chip switching
+  if (hasTabs) {
+    overlay.querySelector('#detail-chips')?.addEventListener('click', e => {
+      const chip = e.target.closest('.filter-chip');
+      if (!chip) return;
+      overlay.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const id = chip.dataset.detailId;
+      overlay.querySelectorAll('.detail-table-section').forEach(s => {
+        s.style.display = s.dataset.detailId === id ? '' : 'none';
+      });
+    });
+  }
+
+  return overlay;
+}
+
+/**
+ * Renders loaded tables into an open detail overlay.
+ */
+function renderDetailContent(overlay, parentItem, detailItems) {
+  const body = overlay.querySelector('#detail-body');
+  if (!body) return;
+
+  const hasTabs = detailItems.length > 1;
+  const firstId = detailItems[0]?.id;
+
+  body.innerHTML = detailItems.map((item, i) => {
+    const divSet = parseDividers(item.dividers);
+    let tableHtml;
+    if (item.result?.type === 'rich') {
+      const { thead, tbody } = renderRichTable(item.result, divSet, null);
+      tableHtml = `<thead>${thead}</thead><tbody>${tbody}</tbody>`;
+    } else {
+      tableHtml = '<tbody><tr><td>Немає даних</td></tr></tbody>';
+    }
+
+    const visible = !hasTabs || i === 0;
+    return `
+      <div class="detail-table-section" data-detail-id="${escHtml(item.id)}"
+           style="${visible ? '' : 'display:none'}">
+        <div class="result-card">
+          <div class="result-table-wrap">
+            <table class="result-table">${tableHtml}</table>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Row highlight
+  body.addEventListener('click', e => {
+    const row = e.target.closest('tbody tr');
     if (!row) return;
+    const tbody = row.closest('tbody');
     const wasActive = row.classList.contains('active');
-    overlay.querySelectorAll('tbody tr.active').forEach(r => r.classList.remove('active'));
+    tbody.querySelectorAll('tr.active').forEach(r => r.classList.remove('active'));
     if (!wasActive) row.classList.add('active');
   });
 }
 
 /**
  * Attaches "Переглянути детальніше →" click handlers.
- * Call after renderResults().
  */
-function initDetailButtons(items) {
+function initDetailButtons(items, onOpen) {
   document.querySelectorAll('.btn-show-more').forEach(btn => {
     btn.addEventListener('click', () => {
       const id   = btn.dataset.cardId;
       const item = items.find(i => i.id === id);
-      if (item) openDetailPage(item);
+      if (item && onOpen) onOpen(item);
     });
   });
 }
@@ -376,7 +441,6 @@ function renderResults(items, activeFilter = 'all') {
   }
 
   container.innerHTML = filtered.map(renderResultCard).join('');
-  initDetailButtons(items);
 }
 
 /* ── Calendar ─────────────────────────────────────────────── */
