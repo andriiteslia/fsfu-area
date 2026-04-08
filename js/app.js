@@ -326,9 +326,28 @@ function handleRowClick(e) {
   if (!row) return;
   const tbody = row.closest('tbody');
   if (!tbody) return;
+
   const wasActive = row.classList.contains('active');
-  tbody.querySelectorAll('tr.active').forEach(r => r.classList.remove('active'));
-  if (!wasActive) row.classList.add('active');
+
+  // Deactivate all rows — restore saved bg colors
+  tbody.querySelectorAll('tr.active').forEach(r => {
+    r.classList.remove('active');
+    r.querySelectorAll('td[data-bg]').forEach(td => {
+      td.style.backgroundColor = td.dataset.bg;
+    });
+  });
+
+  if (!wasActive) {
+    // Save and clear inline bg on each cell, then mark active
+    row.querySelectorAll('td').forEach(td => {
+      const inlineBg = td.style.backgroundColor;
+      if (inlineBg) {
+        td.dataset.bg = inlineBg;
+        td.style.backgroundColor = '';
+      }
+    });
+    row.classList.add('active');
+  }
 }
 
 /* ── Boot ────────────────────────────────────────────────── */
