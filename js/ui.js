@@ -429,7 +429,7 @@ function renderDetailContent(overlay, parentItem, detailItems) {
   if (!detailItems || detailItems.length === 0) {
     body.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">🎣</div>
+        <img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160">
         <p>Даних поки немає</p>
       </div>`;
     return;
@@ -459,7 +459,7 @@ function renderDetailContent(overlay, parentItem, detailItems) {
         <div class="detail-table-section" data-detail-id="${escHtml(item.id)}"
              style="${visible ? '' : 'display:none'}">
           <div class="empty-state">
-            <div class="empty-state-icon">🎣</div>
+            <img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160">
             <p>Даних поки немає</p>
           </div>
         </div>`;
@@ -511,7 +511,7 @@ function renderResultsTo(containerId, items, activeFilter = 'all') {
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">🎣</div>
+        <img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160">
         <p>Результатів за цим фільтром ще немає</p>
       </div>`;
     return;
@@ -586,7 +586,7 @@ function renderCalendar(events) {
   if (events.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">📅</div>
+        <img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160">
         <p>Заплановані події з'являться тут</p>
       </div>`;
     return;
@@ -663,7 +663,7 @@ function renderAbout(about) {
   const federations = about.federations || [];
   const fedHtml = federations.length
     ? federations.map(renderFederationCard).join('')
-    : `<div class="empty-state"><div class="empty-state-icon">🏛️</div><p>Дані федерацій завантажуються...</p></div>`;
+    : `<div class="empty-state"><img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160"><p>Дані федерацій завантажуються...</p></div>`;
 
   container.innerHTML = `
     <div class="about-section">

@@ -198,7 +198,7 @@ async function loadTabContent(tabId) {
     } catch (err) {
       console.error('[App] Failed to load results:', err);
       document.getElementById('results-list').innerHTML =
-        '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити результати</p></div>';
+        '<div class="empty-state"><img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160"><p>Не вдалося завантажити результати</p></div>';
     }
   }
 
@@ -228,7 +228,7 @@ async function loadTabContent(tabId) {
     } catch (err) {
       console.error('[App] Failed to load other:', err);
       document.getElementById('other-list').innerHTML =
-        '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити дані</p></div>';
+        '<div class="empty-state"><img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160"><p>Не вдалося завантажити дані</p></div>';
     }
   }
 
@@ -302,7 +302,7 @@ async function openDetailPageById(parentItem) {
   } catch (err) {
     console.error('[App] Failed to load detail results:', err);
     const body = overlay.querySelector('#detail-body');
-    if (body) body.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити дані</p></div>`;
+    if (body) body.innerHTML = `<div class="empty-state"><img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160"><p>Не вдалося завантажити дані</p></div>`;
   }
 }
 
