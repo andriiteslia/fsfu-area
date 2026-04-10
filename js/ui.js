@@ -138,14 +138,7 @@ function renderRichTable(result, divSet, previewCount) {
     if (cell.rs > 1) attrs.push('rowspan="' + cell.rs + '"');
     if (style.length) attrs.push('style="' + style.join(';') + '"');
 
-    // Place badge: column 0 of data rows
-    let content;
-    if (!isHeader && cell.col === 0) {
-      const n = parseInt(cell.v) || 0;
-      content = '<span class="place ' + placeClass(n) + '">' + escHtml(cell.v) + '</span>';
-    } else {
-      content = escHtml(cell.v);
-    }
+    content = escHtml(cell.v);
 
     const attrStr = attrs.length ? ' ' + attrs.join(' ') : '';
     return '<' + tag + attrStr + '>' + content + '</' + tag + '>';
