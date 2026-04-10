@@ -146,7 +146,13 @@ function initTabs() {
 
     btn.addEventListener('click', () => {
       const tabId = btn.dataset.tab;
-      if (tabId === state.activeTab) return;
+
+      // Tap on already-active tab → scroll to top
+      if (tabId === state.activeTab) {
+        const main = document.getElementById('main');
+        if (main) main.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
 
       // Update nav buttons
       navBtns.forEach(b => {
