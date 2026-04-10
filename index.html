@@ -34,8 +34,8 @@
   <!-- MAIN -->
   <main id="main" class="main">
 
-    <!-- RESULTS TAB -->
-    <section id="tab-results" class="tab active" aria-label="Результати">
+    <!-- ОФІЦІЙНІ TAB -->
+    <section id="tab-results" class="tab active" aria-label="Офіційні">
 
       <!-- Page title -->
       <div class="results-page-title">
@@ -43,30 +43,32 @@
         <p>AREA · Ловля форелі в озерах</p>
       </div>
 
-      <!-- Filter chips — rendered dynamically from config tag_title/tag_order -->
-      <div class="chips-wrap" id="result-chips" role="group" aria-label="Фільтр по тегах"></div>
+      <!-- Filter chips -->
+      <div class="chips-wrap" id="result-chips" role="group" aria-label="Фільтр"></div>
 
       <!-- Results list renders here -->
       <div id="results-list" class="results-list"></div>
 
     </section>
 
-    <!-- CALENDAR TAB -->
-    <section id="tab-calendar" class="tab" aria-label="Календар">
+    <!-- ІНШІ TAB -->
+    <section id="tab-other" class="tab" aria-label="Інші">
 
-      <div class="page-hero">
-        <p class="page-hero-label">📅 Майбутні події</p>
-        <h2 class="page-hero-title">Календар<br>змагань 2026</h2>
-        <p class="page-hero-sub">Афіші, дати відкриття реєстрації та запис</p>
+      <div class="results-page-title">
+        <h2>Інші змагання</h2>
+        <p>Регіональні та відкриті старти</p>
       </div>
 
-      <!-- Calendar list renders here -->
-      <div id="calendar-list" class="calendar-list"></div>
+      <!-- Filter chips -->
+      <div class="chips-wrap" id="other-chips" role="group" aria-label="Фільтр"></div>
+
+      <!-- Results list renders here -->
+      <div id="other-list" class="results-list"></div>
 
     </section>
 
-    <!-- ABOUT TAB -->
-    <section id="tab-about" class="tab" aria-label="Про нас">
+    <!-- ПРО ФРСУ TAB -->
+    <section id="tab-about" class="tab" aria-label="Про ФРСУ">
       <div id="about-content" class="about-content"></div>
     </section>
 
@@ -77,15 +79,15 @@
     <div class="nav-inner">
       <button class="nav-btn active" data-tab="results" role="tab" aria-selected="true" aria-controls="tab-results">
         <span class="nav-icon" aria-hidden="true">🏆</span>
-        <span class="nav-label">Результати</span>
+        <span class="nav-label">Офіційні</span>
       </button>
-      <button class="nav-btn" data-tab="calendar" role="tab" aria-selected="false" aria-controls="tab-calendar">
-        <span class="nav-icon" aria-hidden="true">📅</span>
-        <span class="nav-label">Календар</span>
+      <button class="nav-btn" data-tab="other" role="tab" aria-selected="false" aria-controls="tab-other">
+        <span class="nav-icon" aria-hidden="true">🎣</span>
+        <span class="nav-label">Інші</span>
       </button>
       <button class="nav-btn" data-tab="about" role="tab" aria-selected="false" aria-controls="tab-about">
-        <span class="nav-icon" aria-hidden="true">ℹ️</span>
-        <span class="nav-label">Про нас</span>
+        <span class="nav-icon" aria-hidden="true">🏛️</span>
+        <span class="nav-label">Про ФРСУ</span>
       </button>
     </div>
   </nav>
