@@ -67,6 +67,7 @@ async function fetchConfig() {
     id:            r.id,
     pageId:        r.page_id       || 'results',
     parentId:      r.parent_id     || '',
+    section:       r.section       || 'official',
     tag_title:     r.tag_title     || '',
     tag_order:     r.tag_order     || 0,
     title:         r.title         || '',

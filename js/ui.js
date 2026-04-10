@@ -31,8 +31,8 @@ function escHtml(str) {
  * @param {string}   activeFilter - currently active filter ('all' or tag_title)
  * @param {Function} onChange     - callback(newFilter) when chip is clicked
  */
-function renderFilterChips(items, activeFilter, onChange) {
-  const container = document.getElementById('result-chips');
+function renderFilterChips(items, activeFilter, onChange, containerId = 'result-chips') {
+  const container = document.getElementById(containerId);
   if (!container) return;
 
   // Build unique tags sorted by tag_order
@@ -497,7 +497,11 @@ function initDetailButtons(items, onOpen) {
  * Renders the full results list.
  */
 function renderResults(items, activeFilter = 'all') {
-  const container = document.getElementById('results-list');
+  renderResultsTo('results-list', items, activeFilter);
+}
+
+function renderResultsTo(containerId, items, activeFilter = 'all') {
+  const container = document.getElementById(containerId);
   if (!container) return;
 
   const filtered = activeFilter === 'all'

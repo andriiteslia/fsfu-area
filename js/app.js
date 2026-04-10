@@ -12,11 +12,12 @@
 const state = {
   activeTab:     'results',
   resultFilter:  'all',
-  allConfig:     null,   // all items from config (results + details)
-  resultsData:   null,   // items with page_id=results + loaded result
-  eventsData:    null,
+  otherFilter:   'all',
+  allConfig:     null,
+  resultsData:   null,
+  otherData:     null,
   aboutData:     null,
-  detailPage:    null,   // currently open detail overlay
+  detailPage:    null,
 };
 
 /* ── Telegram WebApp ────────────────────────────────────── */
@@ -178,13 +179,12 @@ async function loadTabContent(tabId) {
       const config = await fetchConfig();
       state.allConfig = config;
 
-      // Load results-page cards
-      const resultsItems = config.filter(c => (c.pageId || 'results') === 'results');
+      // official section only
+      const resultsItems = config.filter(c =>
+        (c.pageId || 'results') === 'results' && (c.section || 'official') === 'official'
+      );
       const withRows = await Promise.all(
-        resultsItems.map(async item => {
-          const result = await fetchResults(item);
-          return { ...item, result };
-        })
+        resultsItems.map(async item => ({ ...item, result: await fetchResults(item) }))
       );
       state.resultsData = withRows;
 
@@ -193,7 +193,6 @@ async function loadTabContent(tabId) {
         renderResults(state.resultsData, state.resultFilter);
         initDetailButtons(state.resultsData, openDetailPageById);
       });
-
       renderResults(state.resultsData, state.resultFilter);
       initDetailButtons(state.resultsData, openDetailPageById);
     } catch (err) {
@@ -203,15 +202,33 @@ async function loadTabContent(tabId) {
     }
   }
 
-  if (tabId === 'calendar' && !state.eventsData) {
-    showSkeleton('calendar-list', 3);
+  if (tabId === 'other' && !state.otherData) {
+    showSkeleton('other-list', 2);
     try {
-      state.eventsData = await fetchEvents();
-      renderCalendar(state.eventsData);
+      const config = state.allConfig || await fetchConfig();
+      state.allConfig = config;
+
+      // other section only
+      const otherItems = config.filter(c =>
+        (c.pageId || 'results') === 'results' && (c.section || 'official') === 'other'
+      );
+      const withRows = await Promise.all(
+        otherItems.map(async item => ({ ...item, result: await fetchResults(item) }))
+      );
+      state.otherData = withRows;
+
+      renderFilterChips(withRows, state.otherFilter, (newFilter) => {
+        state.otherFilter = newFilter;
+        renderResultsTo('other-list', withRows, newFilter);
+        initDetailButtons(withRows, openDetailPageById);
+      }, 'other-chips');
+
+      renderResultsTo('other-list', withRows, state.otherFilter);
+      initDetailButtons(withRows, openDetailPageById);
     } catch (err) {
-      console.error('[App] Failed to load events:', err);
-      document.getElementById('calendar-list').innerHTML =
-        '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити календар</p></div>';
+      console.error('[App] Failed to load other:', err);
+      document.getElementById('other-list').innerHTML =
+        '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Не вдалося завантажити дані</p></div>';
     }
   }
 
@@ -300,10 +317,10 @@ function initRefreshButton() {
     btn.innerHTML = '<span class="btn-spinner"></span>';
     showSkeleton('results-list', 2);
     try {
-      state.resultsData = null;
-      state.eventsData  = null;
-      state.aboutData   = null;
-      state.allConfig   = null;
+    state.resultsData = null;
+    state.otherData   = null;
+    state.aboutData   = null;
+    state.allConfig   = null;
       await loadTabContent(state.activeTab);
     } finally {
       setTimeout(() => {
