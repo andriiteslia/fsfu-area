@@ -960,6 +960,12 @@ button {
   color: var(--c-text-muted); grid-column: 1 / -1;
 }
 .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state-img  {
+  width: 160px; height: 160px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
 .empty-state p    { font-size: 14px; }
 
 /* Skeleton loading */
