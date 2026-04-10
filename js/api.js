@@ -1,186 +1,144 @@
 /**
  * api.js — Data layer for ФРСУ AREA Mini App
  *
- * Flow:
- *   Google Sheets → Apps Script Web App → this file → ui.js
- *
- * During development: MOCK mode (reads from data.js mock objects).
- * Production: set APPS_SCRIPT_URL to your deployed Apps Script Web App URL.
- *
- * Apps Script Web App expects:
- *   ?action=getConfig            → returns parsed config_fsfu_area sheet
- *   ?action=getResults&id=xxx    → returns results for a specific competition
- *   ?action=getEvents            → returns upcoming events list
+ * Primary source: Supabase (fast, ~50-150ms)
+ * Fallback:       Apps Script (if Supabase unavailable)
  */
 
 /* ── Config ─────────────────────────────────────────────── */
 
 const API_CONFIG = {
+  // Supabase — primary fast source
+  SUPABASE_URL: 'https://pcpfjhkcsuxwsykzreab.supabase.co',
+  SUPABASE_KEY: 'sb_publishable_QudBtWR8nhvBZNvU5fIjUA_KgJ0kb1S',
+
+  // Apps Script — fallback / sync trigger
   APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxtxfTGKmZ6_55_bVRaWvmwY8gty5arS58M1lpKgZPoUtqHN-Gigls-weAkZJlr_TBR/exec',
 
-  CONFIG_SHEET_ID:   '10ZIbNLCBTmmC9BClB-Cj7IUjzCyus4rEV7KzQKsMNQs',
-  CONFIG_SHEET_NAME: 'config_fsfu_area',
-  DATA_SHEET_ID:     '1qdiwSvxIznLjUyI6LMZmxTrYl8MPZ-zB0y9tEYosulw',
+  DATA_SHEET_ID: '1qdiwSvxIznLjUyI6LMZmxTrYl8MPZ-zB0y9tEYosulw',
 
-  // false = real data from Apps Script, true = mock data from data.js
   USE_MOCK: false,
 };
 
-/* ── Generic fetch helper ────────────────────────────────── */
+/* ── Supabase REST helper ─────────────────────────────────── */
+
+async function supabaseFetch(table, params = '') {
+  const url = `${API_CONFIG.SUPABASE_URL}/rest/v1/${table}${params}`;
+  const res = await fetch(url, {
+    headers: {
+      'apikey':        API_CONFIG.SUPABASE_KEY,
+      'Authorization': `Bearer ${API_CONFIG.SUPABASE_KEY}`,
+    },
+  });
+  if (!res.ok) throw new Error(`[Supabase] ${res.status} on ${table}`);
+  return res.json();
+}
+
+/* ── Apps Script fallback helper ─────────────────────────── */
 
 async function apiFetch(action, params = {}) {
-  if (!API_CONFIG.APPS_SCRIPT_URL) {
-    throw new Error('[API] APPS_SCRIPT_URL not set');
-  }
-
   const url = new URL(API_CONFIG.APPS_SCRIPT_URL);
   url.searchParams.set('action', action);
   Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
-
   const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`[API] HTTP ${res.status} for action=${action}`);
-
+  if (!res.ok) throw new Error(`[AppsScript] HTTP ${res.status}`);
   const json = await res.json();
-  if (json.error) throw new Error(`[API] Server error: ${json.error}`);
-
+  if (json.error) throw new Error(`[AppsScript] ${json.error}`);
   return json;
 }
 
 /* ── Public API methods ──────────────────────────────────── */
 
-/**
- * Returns list of competition configs (drives Results tab cards).
- * Each item maps to one result card rendered by ui.js.
- *
- * Shape returned:
- * [
- *   {
- *     id:              string,
- *     title:           string,
- *     tag_title:       string,   // e.g. 'Чемпіонат України' — drives filter chips
- *     tag_order:       number,   // sort order of tag in the chips bar
- *     type:            'championship' | 'cup',
- *     dateDisplay:     string,
- *     dateSort:        string,   // YYYY-MM-DD for sorting
- *     location:        string,
- *     status:          string,   // 'Завершено' | 'Відбувається' | 'Очікується' | ...
- *     dataSheetId:     string,
- *     dataSheetName:   string,
- *     dataRange:       string,   // e.g. 'A:E'
- *     visible:         boolean,
- *   }
- * ]
- */
 async function fetchConfig() {
   if (API_CONFIG.USE_MOCK) {
-    // Transform MOCK_RESULTS from data.js into config-shaped objects
     return MOCK_RESULTS.map(r => ({
-      id:            r.id,
-      title:         r.title,
-      tag_title:     r.tag_title  || '',
-      tag_order:     r.tag_order  || 0,
-      type:          r.type,
-      dateDisplay:   r.dateDisplay,
-      dateSort:      r.date,
-      location:      r.location,
-      status:        r.status || 'Завершено',
-      dataSheetId:   API_CONFIG.DATA_SHEET_ID,
-      dataSheetName: '',
-      dataRange:     'A:E',
-      headerRows:    1,
-      dividers:      '',
-      visible:       true,
+      id: r.id, title: r.title,
+      tag_title: r.tag_title || '', tag_order: r.tag_order || 0,
+      type: r.type, dateDisplay: r.dateDisplay, dateSort: r.date,
+      location: r.location, dataSheetId: API_CONFIG.DATA_SHEET_ID,
+      dataSheetName: '', dataRange: 'A:E', headerRows: 1,
+      dividers: '', pageId: 'results', parentId: '', visible: true,
     }));
   }
 
-  return apiFetch('getConfig');
+  // Supabase — read config_cards
+  const rows = await supabaseFetch('config_cards', '?visible=eq.true&order=tag_order.asc');
+  return rows.map(r => ({
+    id:            r.id,
+    pageId:        r.page_id       || 'results',
+    parentId:      r.parent_id     || '',
+    tag_title:     r.tag_title     || '',
+    tag_order:     r.tag_order     || 0,
+    title:         r.title         || '',
+    dateDisplay:   r.date_display  || '',
+    dateSort:      r.date_sort     || '',
+    location:      r.location      || '',
+    dataSheetId:   r.data_sheet_id || '',
+    dataSheetName: r.data_sheet_name || '',
+    dataRange:     r.data_range    || 'A:Z',
+    headerRows:    r.header_rows   || 0,
+    dividers:      r.dividers      || '',
+    visible:       r.visible !== false,
+  }));
 }
 
-/**
- * Returns rows for a single competition result card.
- *
- * Shape returned:
- * {
- *   headers: ['#', 'Команда', 'Регіон', 'Результат'],
- *   rows: [
- *     { place: 1, cells: ['Назва команди', 'Область', '14 риб · 4 280 г'] },
- *     ...
- *   ]
- * }
- */
 async function fetchResults(configItem) {
   if (API_CONFIG.USE_MOCK) {
     const found = MOCK_RESULTS.find(r => r.id === configItem.id);
-    if (!found) return { headers: [], rows: [] };
-
-    return {
-      headers: ['#', 'Команда', 'Регіон', 'Результат'],
-      rows: found.teams.map(t => ({
-        place: t.place,
-        cells: [t.name, t.region, t.score],
-      })),
-    };
+    if (!found) return { type: 'rich', rows: [] };
+    return { type: 'rich', rows: [] };
   }
 
+  // Supabase — read from results_cache
+  try {
+    const rows = await supabaseFetch(
+      'results_cache',
+      `?card_id=eq.${encodeURIComponent(configItem.id)}&limit=1`
+    );
+    if (rows && rows.length > 0 && rows[0].result_json) {
+      return rows[0].result_json;
+    }
+  } catch (e) {
+    console.warn('[API] Supabase results miss for', configItem.id, '— falling back to Apps Script');
+  }
+
+  // Fallback to Apps Script
   return apiFetch('getResults', {
     sheetId:    configItem.dataSheetId,
     sheetName:  configItem.dataSheetName,
     range:      configItem.dataRange,
-    headerRows: configItem.headerRows || 1,
+    headerRows: configItem.headerRows || 0,
   });
 }
 
-/**
- * Returns upcoming events for the Calendar tab.
- *
- * Shape returned:
- * [
- *   {
- *     id:           string,
- *     title:        string,
- *     date:         string,   // YYYY-MM-DD
- *     dateDisplay:  string,
- *     location:     string,
- *     discipline:   string,
- *     type:         string,
- *     registration: 'open' | 'soon' | 'closed',
- *     registerUrl:  string | null,
- *   }
- * ]
- */
 async function fetchEvents() {
-  if (API_CONFIG.USE_MOCK) {
-    return MOCK_EVENTS;
-  }
-
+  if (API_CONFIG.USE_MOCK) return MOCK_EVENTS;
   return apiFetch('getEvents');
 }
 
-/**
- * Returns federation about info.
- */
 async function fetchAbout() {
-  if (API_CONFIG.USE_MOCK) {
-    return ABOUT_INFO;
+  if (API_CONFIG.USE_MOCK) return ABOUT_INFO;
+
+  try {
+    const rows = await supabaseFetch(
+      'about_federations',
+      '?visible=eq.true&order=fed_order.asc'
+    );
+    const federations = rows.map(r => ({
+      order:    r.fed_order,
+      name:     r.fed_name,
+      short:    r.fed_short,
+      region:   r.region,
+      photoUrl: r.photo_url,
+      captain:  r.captain,
+      members:  r.members ? r.members.split(',').map(m => m.trim()).filter(Boolean) : [],
+      email:    r.email,
+      phone:    r.phone,
+    }));
+    return { contacts: ABOUT_INFO.contacts, federations };
+  } catch (e) {
+    console.warn('[API] Supabase about miss — falling back');
+    const apiData = await apiFetch('getAbout');
+    return { contacts: ABOUT_INFO.contacts, federations: apiData.federations || [] };
   }
-  // Merge hardcoded contacts with API federations
-  const apiData = await apiFetch('getAbout');
-  return {
-    contacts:     ABOUT_INFO.contacts,
-    federations:  apiData.federations || [],
-  };
-}
-
-/* ── Switch to live mode ─────────────────────────────────── */
-
-/**
- * Call this once your Apps Script Web App is deployed.
- *
- * Usage in app.js or inline:
- *   setApiUrl('https://script.google.com/macros/s/YOUR_ID/exec');
- */
-function setApiUrl(url) {
-  API_CONFIG.APPS_SCRIPT_URL = url;
-  API_CONFIG.USE_MOCK = false;
-  console.log('[API] Live mode enabled:', url);
 }
