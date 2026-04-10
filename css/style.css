@@ -118,6 +118,19 @@ button {
   transition: height 0.2s ease, padding-top 0.2s ease;
 }
 
+/* Extend header bg upward to cover safe area gap during scroll */
+.header::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--app-top-pad);
+  background: var(--c-blue-deep);
+  z-index: 301;
+  pointer-events: none;
+}
+
 .header-inner {
   height: 100%;
   display: flex;
@@ -146,43 +159,58 @@ button {
   flex: 1;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.last-updated {
+  font-family: 'Google Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  white-space: nowrap;
+}
+
 /* Refresh button */
 .header-refresh-btn,
 .detail-refresh-btn {
   padding: 6px 16px;
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--c-white);
+  background: #ffffff;
+  color: var(--c-blue-deep);
   font-family: 'Google Sans', sans-serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.3px;
   flex-shrink: 0;
-  transition: background var(--t-fast);
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  transition: opacity var(--t-fast);
+  border: none;
   white-space: nowrap;
-  min-width: 80px;        /* preserve width when switching to spinner */
+  min-width: 84px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
 
 .header-refresh-btn:hover,
-.detail-refresh-btn:hover  { background: rgba(255, 255, 255, 0.22); }
+.detail-refresh-btn:hover  { opacity: 0.88; }
 
 .header-refresh-btn:active,
-.detail-refresh-btn:active { background: rgba(255, 255, 255, 0.32); }
+.detail-refresh-btn:active { opacity: 0.75; }
 
 .header-refresh-btn:disabled,
-.detail-refresh-btn:disabled { opacity: 0.7; }
+.detail-refresh-btn:disabled { opacity: 0.6; }
 
 /* Spinner inside refresh button */
 .btn-spinner {
   display: block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255,255,255,0.35);
-  border-top-color: #ffffff;
+  border: 2px solid rgba(0,45,110,0.2);
+  border-top-color: var(--c-blue-deep);
   border-radius: 50%;
   animation: btn-spin 0.7s linear infinite;
   flex-shrink: 0;
