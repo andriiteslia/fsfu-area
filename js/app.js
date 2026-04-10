@@ -306,7 +306,32 @@ async function openDetailPageById(parentItem) {
   }
 }
 
-/* ── Refresh button ─────────────────────────────────────── */
+/* ── Last updated indicator ─────────────────────────────── */
+let lastUpdatedTime = null;
+let lastUpdatedTimer = null;
+
+function setLastUpdated() {
+  lastUpdatedTime = Date.now();
+  updateLastUpdatedLabel();
+  if (lastUpdatedTimer) clearInterval(lastUpdatedTimer);
+  lastUpdatedTimer = setInterval(updateLastUpdatedLabel, 30000);
+}
+
+function updateLastUpdatedLabel() {
+  const el = document.getElementById('lastUpdated');
+  if (!el || !lastUpdatedTime) return;
+  const sec = Math.floor((Date.now() - lastUpdatedTime) / 1000);
+  let label;
+  if (sec < 30)          label = 'щойно';
+  else if (sec < 60)     label = '30 сек тому';
+  else if (sec < 120)    label = '1 хв тому';
+  else if (sec < 3600)   label = Math.floor(sec / 60) + ' хв тому';
+  else if (sec < 7200)   label = '1 год тому';
+  else                   label = Math.floor(sec / 3600) + ' год тому';
+  el.textContent = label;
+}
+
+
 function initRefreshButton() {
   const btn = document.getElementById('refreshBtn');
   if (!btn) return;
@@ -314,18 +339,20 @@ function initRefreshButton() {
   btn.addEventListener('click', async () => {
     if (btn.disabled) return;
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-spinner"></span>';
+    const textEl = btn.querySelector('.refresh-btn-text');
+    if (textEl) textEl.innerHTML = '<span class="btn-spinner"></span>';
     showSkeleton('results-list', 2);
     try {
-    state.resultsData = null;
-    state.otherData   = null;
-    state.aboutData   = null;
-    state.allConfig   = null;
+      state.resultsData = null;
+      state.otherData   = null;
+      state.aboutData   = null;
+      state.allConfig   = null;
       await loadTabContent(state.activeTab);
+      setLastUpdated();
     } finally {
       setTimeout(() => {
         btn.disabled = false;
-        btn.innerHTML = 'Оновити';
+        if (textEl) textEl.textContent = 'Оновити';
       }, 600);
     }
   });
@@ -373,5 +400,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initRefreshButton();
   initRowHighlight();
-  loadTabContent(state.activeTab);
+  loadTabContent(state.activeTab).then(() => setLastUpdated());
 });
