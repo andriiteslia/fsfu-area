@@ -291,6 +291,28 @@ function buildDetailSkeleton() {
     </div>`;
 }
 
+/**
+ * Sets the last-updated label inside a detail overlay.
+ */
+function setDetailLastUpdated(overlay) {
+  const el = overlay.querySelector('#detailLastUpdated');
+  if (!el) return;
+  const now = Date.now();
+  el.dataset.ts = now;
+  el.textContent = 'щойно';
+
+  // Update every 30s while overlay is open
+  const timer = setInterval(() => {
+    if (!document.contains(el)) { clearInterval(timer); return; }
+    const sec = Math.floor((Date.now() - now) / 1000);
+    if (sec < 30)        el.textContent = 'щойно';
+    else if (sec < 60)   el.textContent = '30 сек тому';
+    else if (sec < 120)  el.textContent = '1 хв тому';
+    else if (sec < 3600) el.textContent = Math.floor(sec / 60) + ' хв тому';
+    else                 el.textContent = Math.floor(sec / 3600) + ' год тому';
+  }, 30000);
+}
+
 /* ── Detail page ─────────────────────────────────────── */
 
 /**
@@ -319,7 +341,12 @@ function openDetailOverlay(parentItem, detailConfigs) {
       <div class="detail-page-header-inner">
         <button class="detail-back-btn" aria-label="Назад">← Назад</button>
         <div class="detail-page-header-spacer"></div>
-        <button class="detail-refresh-btn" aria-label="Оновити">Оновити</button>
+        <div class="header-right">
+          <span class="last-updated" id="detailLastUpdated"></span>
+          <button class="detail-refresh-btn" aria-label="Оновити">
+            <span class="refresh-btn-text">Оновити</span>
+          </button>
+        </div>
       </div>
     </div>
     <div class="detail-scroll">
@@ -359,13 +386,12 @@ function openDetailOverlay(parentItem, detailConfigs) {
     const btn = overlay.querySelector('.detail-refresh-btn');
     if (btn.disabled) return;
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-spinner"></span>';
+    const textEl = btn.querySelector('.refresh-btn-text');
+    if (textEl) textEl.innerHTML = '<span class="btn-spinner"></span>';
 
-    // Remember which tab is active before reload
     const activeChip = overlay.querySelector('#detail-chips .chip.active');
     const activeDetailId = activeChip?.dataset.detailId || null;
 
-    // Show skeleton while loading
     const body = overlay.querySelector('#detail-body');
     if (body) body.innerHTML = buildDetailSkeleton();
 
@@ -377,7 +403,6 @@ function openDetailOverlay(parentItem, detailConfigs) {
       );
       renderDetailContent(overlay, parentItem, withRows);
 
-      // Restore active tab after render
       if (activeDetailId) {
         overlay.querySelectorAll('#detail-chips .chip').forEach(c => {
           c.classList.toggle('active', c.dataset.detailId === activeDetailId);
@@ -386,10 +411,12 @@ function openDetailOverlay(parentItem, detailConfigs) {
           s.style.display = s.dataset.detailId === activeDetailId ? '' : 'none';
         });
       }
+
+      setDetailLastUpdated(overlay);
     } finally {
       setTimeout(() => {
         btn.disabled = false;
-        btn.innerHTML = 'Оновити';
+        if (textEl) textEl.textContent = 'Оновити';
       }, 600);
     }
   });
@@ -416,6 +443,7 @@ function openDetailOverlay(parentItem, detailConfigs) {
   }
 
   document.body.appendChild(overlay);
+  setDetailLastUpdated(overlay);
   return overlay;
 }
 
