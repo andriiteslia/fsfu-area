@@ -159,24 +159,8 @@ button {
   flex: 1;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.last-updated {
-  font-family: 'Google Sans', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.55);
-  white-space: nowrap;
-}
-
-/* Refresh button */
-.header-refresh-btn,
-.detail-refresh-btn {
+/* Refresh button — header (white filled on dark bg) */
+.header-refresh-btn {
   padding: 6px 16px;
   border-radius: 50px;
   background: #ffffff;
@@ -194,14 +178,31 @@ button {
   align-items: center;
   justify-content: center;
 }
+.header-refresh-btn:hover  { opacity: 0.88; }
+.header-refresh-btn:active { opacity: 0.75; }
+.header-refresh-btn:disabled { opacity: 0.6; }
 
-.header-refresh-btn:hover,
-.detail-refresh-btn:hover  { opacity: 0.88; }
-
-.header-refresh-btn:active,
-.detail-refresh-btn:active { opacity: 0.75; }
-
-.header-refresh-btn:disabled,
+/* Refresh button — detail page (outline on dark bg) */
+.detail-refresh-btn {
+  padding: 5px 14px;
+  border-radius: 50px;
+  background: transparent;
+  color: #ffffff;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+  transition: background var(--t-fast);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  white-space: nowrap;
+  min-width: 84px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.detail-refresh-btn:hover  { background: rgba(255,255,255,0.12); }
+.detail-refresh-btn:active { background: rgba(255,255,255,0.22); }
 .detail-refresh-btn:disabled { opacity: 0.6; }
 
 /* Spinner inside refresh button */
@@ -214,6 +215,12 @@ button {
   border-radius: 50%;
   animation: btn-spin 0.7s linear infinite;
   flex-shrink: 0;
+}
+
+/* White spinner variant for detail page */
+.detail-refresh-btn .btn-spinner {
+  border-color: rgba(255,255,255,0.3);
+  border-top-color: #ffffff;
 }
 
 @keyframes btn-spin {
