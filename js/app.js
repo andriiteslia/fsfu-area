@@ -301,7 +301,15 @@ async function openDetailPageById(parentItem) {
     }
 
     const withRows = await Promise.all(
-      detailConfigs.map(async item => ({ ...item, result: await fetchResults(item) }))
+      detailConfigs.map(async item => {
+        try {
+          const result = await fetchResults(item);
+          return { ...item, result };
+        } catch (e) {
+          console.warn('[App] fetchResults failed for', item.id, e.message);
+          return { ...item, result: { type: 'rich', rows: [] } };
+        }
+      })
     );
 
     renderDetailContent(overlay, parentItem, withRows);
