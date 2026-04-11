@@ -573,7 +573,7 @@ button {
   background: #D6E8FF;
   box-shadow: inset 3px 0 0 0 var(--c-blue-main);
 }
-.result-table td              { padding: 7px 10px; vertical-align: middle; white-space: nowrap; }
+.result-table td              { padding: 7px 10px; vertical-align: middle; white-space: nowrap; font-size: 15px; }
 .result-table th              { white-space: nowrap; }
 
 /* Place badge */
