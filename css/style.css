@@ -402,11 +402,20 @@ button {
 
 .chips-wrap {
   display: flex; gap: 8px;
-  overflow-x: auto; padding-bottom: 4px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  padding-left: var(--pad-mobile);
+  padding-right: var(--pad-mobile);
+  margin-left: calc(-1 * var(--pad-mobile));
+  margin-right: calc(-1 * var(--pad-mobile));
   margin-bottom: 16px;
   scrollbar-width: none;
 }
 .chips-wrap::-webkit-scrollbar { display: none; }
+
+/* First/last chip get padding instead of margin on container */
+.chips-wrap .chip:first-child { margin-left: 0; }
+.chips-wrap .chip:last-child  { margin-right: 0; }
 
 .chip {
   flex-shrink: 0; padding: 6px 14px;
@@ -919,6 +928,10 @@ button {
   gap: 8px;
   overflow-x: auto;
   padding-bottom: 4px;
+  padding-left: var(--pad-mobile);
+  padding-right: var(--pad-mobile);
+  margin-left: calc(-1 * var(--pad-mobile));
+  margin-right: calc(-1 * var(--pad-mobile));
   scrollbar-width: none;
 }
 .detail-filter-chips::-webkit-scrollbar { display: none; }
