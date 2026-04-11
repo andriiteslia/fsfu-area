@@ -65,10 +65,10 @@ function renderFilterChips(items, activeFilter, onChange, containerId = 'result-
       container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       // Scroll chip into center of container
-      const chipLeft = chip.offsetLeft;
-      const chipWidth = chip.offsetWidth;
-      const containerWidth = container.offsetWidth;
-      container.scrollTo({ left: chipLeft - (containerWidth - chipWidth) / 2, behavior: 'smooth' });
+      const chipRect = chip.getBoundingClientRect();
+      const contRect = container.getBoundingClientRect();
+      const scrollOffset = container.scrollLeft + chipRect.left - contRect.left - (contRect.width - chipRect.width) / 2;
+      container.scrollTo({ left: scrollOffset, behavior: 'smooth' });
       onChange(chip.dataset.filter);
     });
   });
@@ -442,10 +442,10 @@ function openDetailOverlay(parentItem, detailConfigs) {
       chipsEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       // Scroll chip into center of container
-      const chipLeft = chip.offsetLeft;
-      const chipWidth = chip.offsetWidth;
-      const containerWidth = chipsEl.offsetWidth;
-      chipsEl.scrollTo({ left: chipLeft - (containerWidth - chipWidth) / 2, behavior: 'smooth' });
+      const chipRect = chip.getBoundingClientRect();
+      const contRect = chipsEl.getBoundingClientRect();
+      const scrollOffset = chipsEl.scrollLeft + chipRect.left - contRect.left - (contRect.width - chipRect.width) / 2;
+      chipsEl.scrollTo({ left: scrollOffset, behavior: 'smooth' });
       const id = chip.dataset.detailId;
       overlay.querySelectorAll('.detail-table-section').forEach(s => {
         s.style.display = s.dataset.detailId === id ? '' : 'none';
