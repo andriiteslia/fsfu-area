@@ -64,6 +64,7 @@ function renderFilterChips(items, activeFilter, onChange, containerId = 'result-
     chip.addEventListener('click', () => {
       container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       onChange(chip.dataset.filter);
     });
   });
@@ -435,6 +436,7 @@ function openDetailOverlay(parentItem, detailConfigs) {
       if (!chip) return;
       overlay.querySelectorAll('#detail-chips .chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
+      chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       const id = chip.dataset.detailId;
       overlay.querySelectorAll('.detail-table-section').forEach(s => {
         s.style.display = s.dataset.detailId === id ? '' : 'none';
