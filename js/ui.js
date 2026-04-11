@@ -31,21 +31,6 @@ function escHtml(str) {
  * @param {string}   activeFilter - currently active filter ('all' or tag_title)
  * @param {Function} onChange     - callback(newFilter) when chip is clicked
  */
-function scrollChipIntoView(chip, container) {
-  requestAnimationFrame(() => {
-    const chipRect = chip.getBoundingClientRect();
-    const contRect = container.getBoundingClientRect();
-    const chipLeft   = chipRect.left - contRect.left;
-    const chipRight  = chipRect.right - contRect.left;
-    const contWidth  = contRect.width;
-    if (chipLeft < 0) {
-      container.scrollLeft += chipLeft - 16;
-    } else if (chipRight > contWidth) {
-      container.scrollLeft += chipRight - contWidth + 16;
-    }
-  });
-}
-
 function renderFilterChips(items, activeFilter, onChange, containerId = 'result-chips') {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -79,7 +64,7 @@ function renderFilterChips(items, activeFilter, onChange, containerId = 'result-
     chip.addEventListener('click', () => {
       container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      scrollChipIntoView(chip, container);
+      setTimeout(() => chip.scrollIntoView({ inline: "nearest", block: "nearest" }), 0);
       onChange(chip.dataset.filter);
     });
   });
@@ -452,7 +437,7 @@ function openDetailOverlay(parentItem, detailConfigs) {
       if (!chip) return;
       chipsEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
-      scrollChipIntoView(chip, chipsEl);
+      setTimeout(() => chip.scrollIntoView({ inline: "nearest", block: "nearest" }), 0);
       const id = chip.dataset.detailId;
       overlay.querySelectorAll('.detail-table-section').forEach(s => {
         s.style.display = s.dataset.detailId === id ? '' : 'none';
