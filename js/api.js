@@ -62,12 +62,13 @@ async function fetchConfig() {
   }
 
   // Supabase — read config_cards
-  const rows = await supabaseFetch('config_cards', '?visible=eq.true&order=tag_order.asc');
+  const rows = await supabaseFetch('config_cards', '?visible=eq.true&order=card_order.asc');
   return rows.map(r => ({
     id:            r.id,
     pageId:        r.page_id       || 'results',
     parentId:      r.parent_id     || '',
     section:       r.section       || 'official',
+    cardOrder:     r.card_order    || 999,
     tag_title:     r.tag_title     || '',
     tag_order:     r.tag_order     || 0,
     title:         r.title         || '',
