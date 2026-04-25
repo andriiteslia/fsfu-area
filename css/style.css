@@ -320,7 +320,7 @@ button {
 /* ── Tab sections ─────────────────────────────────────── */
 .tab {
   display: none;
-  padding: 6px var(--pad-mobile) 0;
+  padding: 12px var(--pad-mobile) 0;
   animation: fadeUp var(--t-norm) both;
   max-width: var(--max-w);
   margin: 0 auto;
