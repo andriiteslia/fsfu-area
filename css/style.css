@@ -449,6 +449,11 @@ button {
   padding: 0 2px 12px;
 }
 
+/* About tab — slightly less bottom padding since info-card follows */
+.about-page-title {
+  padding-bottom: 8px;
+}
+
 .results-page-title h2 {
   font-family: 'Montserrat', sans-serif;
   font-size: 20px;
