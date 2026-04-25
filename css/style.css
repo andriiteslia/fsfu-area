@@ -320,7 +320,7 @@ button {
 /* ── Tab sections ─────────────────────────────────────── */
 .tab {
   display: none;
-  padding: 12px var(--pad-mobile) 0;
+  padding: 6px var(--pad-mobile) 0;
   animation: fadeUp var(--t-norm) both;
   max-width: var(--max-w);
   margin: 0 auto;
@@ -449,9 +449,9 @@ button {
   padding: 0 2px 12px;
 }
 
-/* About tab — slightly less bottom padding since info-card follows */
+/* About tab — more space after subtitle before info-card */
 .about-page-title {
-  padding-bottom: 8px;
+  padding-bottom: 16px;
 }
 
 .results-page-title h2 {
