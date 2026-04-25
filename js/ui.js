@@ -50,7 +50,7 @@ function renderFilterChips(items, activeFilter, onChange, containerId = 'result-
   // Render: "Усі" + one chip per unique tag
   const allActive = activeFilter === 'all' ? 'active' : '';
   const chipsHtml = [
-    `<button class="chip ${allActive}" data-filter="all">Усі</button>`,
+    `<button class="chip ${allActive}" data-filter="all">Усі (${items.length})</button>`,
     ...tags.map(tag => {
       const isActive = activeFilter === tag ? 'active' : '';
       return `<button class="chip ${isActive}" data-filter="${escHtml(tag)}">${escHtml(tag)}</button>`;
