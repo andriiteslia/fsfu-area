@@ -698,7 +698,7 @@ function renderAbout(about) {
 
   container.innerHTML = `
     <div class="about-section">
-      <div class="results-page-title" style="margin-bottom:12px">
+      <div class="results-page-title about-page-title">
         <h2>Контакти</h2>
         <p>Федерація риболовного спорту України</p>
       </div>

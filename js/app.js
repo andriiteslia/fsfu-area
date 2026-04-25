@@ -355,7 +355,11 @@ function initRefreshButton() {
     btn.disabled = true;
     const textEl = btn.querySelector('.refresh-btn-text');
     if (textEl) textEl.innerHTML = '<span class="btn-spinner"></span>';
-    showSkeleton('results-list', 2);
+
+    // Show skeleton only in the currently active tab
+    const activeList = state.activeTab === 'other' ? 'other-list' : 'results-list';
+    showSkeleton(activeList, 2);
+
     try {
       state.resultsData = null;
       state.otherData   = null;

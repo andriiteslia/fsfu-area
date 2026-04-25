@@ -20,6 +20,37 @@ const API_CONFIG = {
   USE_MOCK: false,
 };
 
+/* ── Timeout wrapper ─────────────────────────────────────── */
+
+function withTimeout(promise, ms = 15000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('TIMEOUT')), ms)
+    ),
+  ]);
+}
+
+/* ── LocalStorage cache ──────────────────────────────────── */
+
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+function cacheSet(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
+  } catch (e) {}
+}
+
+function cacheGet(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data;
+  } catch (e) { return null; }
+}
+
 /* ── Supabase REST helper ─────────────────────────────────── */
 
 async function supabaseFetch(table, params = '') {
@@ -61,56 +92,75 @@ async function fetchConfig() {
     }));
   }
 
-  // Supabase — read config_cards
-  const rows = await supabaseFetch('config_cards', '?visible=eq.true&order=card_order.asc');
-  return rows.map(r => ({
-    id:            r.id,
-    pageId:        r.page_id       || 'results',
-    parentId:      r.parent_id     || '',
-    section:       r.section       || 'official',
-    cardOrder:     r.card_order    || 999,
-    tag_title:     r.tag_title     || '',
-    tag_order:     r.tag_order     || 0,
-    title:         r.title         || '',
-    dateDisplay:   r.date_display  || '',
-    dateSort:      r.date_sort     || '',
-    location:      r.location      || '',
-    dataSheetId:   r.data_sheet_id || '',
-    dataSheetName: r.data_sheet_name || '',
-    dataRange:     r.data_range    || 'A:Z',
-    headerRows:    r.header_rows   || 0,
-    dividers:      r.dividers      || '',
-    visible:       r.visible !== false,
-  }));
+  const CACHE_KEY = 'fsfu_config';
+
+  try {
+    const rows = await withTimeout(
+      supabaseFetch('config_cards', '?visible=eq.true&order=card_order.asc')
+    );
+    const mapped = rows.map(r => ({
+      id:            r.id,
+      pageId:        r.page_id       || 'results',
+      parentId:      r.parent_id     || '',
+      section:       r.section       || 'official',
+      cardOrder:     r.card_order    || 999,
+      tag_title:     r.tag_title     || '',
+      tag_order:     r.tag_order     || 0,
+      title:         r.title         || '',
+      dateDisplay:   r.date_display  || '',
+      dateSort:      r.date_sort     || '',
+      location:      r.location      || '',
+      dataSheetId:   r.data_sheet_id || '',
+      dataSheetName: r.data_sheet_name || '',
+      dataRange:     r.data_range    || 'A:Z',
+      headerRows:    r.header_rows   || 0,
+      dividers:      r.dividers      || '',
+      visible:       r.visible !== false,
+    }));
+    cacheSet(CACHE_KEY, mapped);
+    return mapped;
+  } catch (e) {
+    // Timeout or network error — try cache
+    const cached = cacheGet(CACHE_KEY);
+    if (cached) { console.warn('[API] fetchConfig using cache:', e.message); return cached; }
+    throw e;
+  }
 }
 
 async function fetchResults(configItem) {
   if (API_CONFIG.USE_MOCK) {
-    const found = MOCK_RESULTS.find(r => r.id === configItem.id);
-    if (!found) return { type: 'rich', rows: [] };
     return { type: 'rich', rows: [] };
   }
 
-  // Supabase — read from results_cache
+  const CACHE_KEY = `fsfu_result_${configItem.id}`;
+
   try {
-    const rows = await supabaseFetch(
-      'results_cache',
-      `?card_id=eq.${encodeURIComponent(configItem.id)}&limit=1`
+    const rows = await withTimeout(
+      supabaseFetch('results_cache', `?card_id=eq.${encodeURIComponent(configItem.id)}&limit=1`)
     );
     if (rows && rows.length > 0 && rows[0].result_json) {
+      cacheSet(CACHE_KEY, rows[0].result_json);
       return rows[0].result_json;
     }
   } catch (e) {
-    console.warn('[API] Supabase results miss for', configItem.id, '— falling back to Apps Script');
+    const cached = cacheGet(CACHE_KEY);
+    if (cached) { console.warn('[API] fetchResults using cache for', configItem.id); return cached; }
+    console.warn('[API] Supabase results miss for', configItem.id, '— falling back');
   }
 
   // Fallback to Apps Script
-  return apiFetch('getResults', {
-    sheetId:    configItem.dataSheetId,
-    sheetName:  configItem.dataSheetName,
-    range:      configItem.dataRange,
-    headerRows: configItem.headerRows || 0,
-  });
+  try {
+    return await withTimeout(apiFetch('getResults', {
+      sheetId:    configItem.dataSheetId,
+      sheetName:  configItem.dataSheetName,
+      range:      configItem.dataRange,
+      headerRows: configItem.headerRows || 0,
+    }));
+  } catch (e) {
+    const cached = cacheGet(CACHE_KEY);
+    if (cached) return cached;
+    throw e;
+  }
 }
 
 async function fetchEvents() {
