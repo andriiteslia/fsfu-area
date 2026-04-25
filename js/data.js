@@ -86,8 +86,8 @@ const ABOUT_INFO = {
     { icon: '📞', label: 'Телефон', value: '(095) 481-64-64', url: 'tel:+380954816464' },
     { icon: '📧', label: 'Email',   value: 'fsfu2020@gmail.com', url: 'mailto:fsfu2020@gmail.com' },
     { icon: '🌐', label: 'Вебсайт', value: 'fsfu.com.ua', url: 'https://fsfu.com.ua' },
-    { icon: '📸', label: 'Instagram', value: '@fsfu_area', url: 'https://instagram.com/fsfu_area' },
-    { icon: '💬', label: 'Telegram', value: 'ФРСУ AREA', url: 'https://t.me/fsfu_area' },
+    { icon: '<img src="assets/imgs/instagram.svg" width="22" height="22" style="vertical-align:middle">', label: 'Instagram', value: '@fsfu_news', url: 'https://www.instagram.com/fsfu_news/' },
+    { icon: '<img src="assets/imgs/telegram.svg" width="22" height="22" style="vertical-align:middle">', label: 'Telegram', value: 'ФРСУ AREA', url: 'https://t.me/fsfu_area' },
   ],
   federations: [],  // loaded from config sheet
 };

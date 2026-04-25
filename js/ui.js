@@ -694,11 +694,14 @@ function renderAbout(about) {
   const federations = about.federations || [];
   const fedHtml = federations.length
     ? federations.map(renderFederationCard).join('')
-    : `<div class="empty-state"><img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160"><p>Дані федерацій завантажуються...</p></div>`;
+    : `<div class="empty-state"><img src="assets/imgs/rainbow trout.png" class="empty-state-img" alt="" width="160" height="160"><p>Ця секція ще в розробці...</p></div>`;
 
   container.innerHTML = `
     <div class="about-section">
-      <div class="section-label">Контакти</div>
+      <div class="results-page-title" style="margin-bottom:12px">
+        <h2>Контакти</h2>
+        <p>Федерація риболовного спорту України</p>
+      </div>
       <div class="info-card">${contactRows}</div>
     </div>
     <div class="about-section">
