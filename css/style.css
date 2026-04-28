@@ -167,9 +167,9 @@ button {
 
 .last-updated {
   font-family: 'Google Sans', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
-  color: rgba(255,255,255,0.60);
+  color: rgba(255,255,255,0.80);
   white-space: nowrap;
 }
 
@@ -182,7 +182,7 @@ button {
   background: #ffffff;
   color: var(--c-blue-deep);
   font-family: 'Google Sans', sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.3px;
   flex-shrink: 0;
@@ -194,8 +194,10 @@ button {
   align-items: center;
   justify-content: center;
 }
-.header-refresh-btn:hover,
-.detail-refresh-btn:hover  { opacity: 0.88; }
+@media (hover: hover) {
+  .header-refresh-btn:hover,
+  .detail-refresh-btn:hover  { opacity: 0.88; }
+}
 
 .header-refresh-btn:active,
 .detail-refresh-btn:active { opacity: 0.75; }
