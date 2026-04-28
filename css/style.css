@@ -1058,3 +1058,39 @@ button {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ════════════════════════════════════════════════════════
+   APP FOOTER
+   ════════════════════════════════════════════════════════ */
+
+.app-footer {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--c-text-muted);
+  line-height: 1.6;
+  padding: 28px var(--pad-mobile) 12px;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.app-footer-sep {
+  opacity: 0.5;
+}
+
+.app-footer a {
+  color: var(--c-blue-main);
+  font-weight: 600;
+  transition: opacity var(--t-fast);
+}
+
+.app-footer a:hover { opacity: 0.75; }
+
+@media (min-width: 768px) {
+  .app-footer { font-size: 12px; padding: 36px var(--pad-tablet) 16px; }
+}
