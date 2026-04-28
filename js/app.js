@@ -8,6 +8,9 @@
  *  - Filter chip interaction (results tab)
  */
 
+/* ── App version ───────────────────────────────────────── */
+const APP_VERSION = '1.0.0';
+
 /* ── State ─────────────────────────────────────────────── */
 const state = {
   activeTab:     'results',
@@ -418,5 +421,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initRefreshButton();
   initRowHighlight();
+
+  const verEl = document.getElementById('appVersion');
+  if (verEl) verEl.textContent = 'v' + APP_VERSION;
+
   loadTabContent(state.activeTab).then(() => setLastUpdated());
 });
