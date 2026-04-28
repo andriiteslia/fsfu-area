@@ -38,7 +38,7 @@
   --tg-safe-bottom: env(safe-area-inset-bottom, 0px);
 
   /* Layout */
-  --header-h:        54px;
+  --header-h:        64px;
   --nav-h-mobile:    62px;
   --nav-h-desktop:   50px;
   --max-w:           1080px;
@@ -167,7 +167,7 @@ button {
 
 .last-updated {
   font-family: 'Google Sans', sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: rgba(255,255,255,0.60);
   white-space: nowrap;
@@ -176,7 +176,8 @@ button {
 /* Refresh button — identical everywhere */
 .header-refresh-btn,
 .detail-refresh-btn {
-  padding: 6px 16px;
+  height: 40px;
+  padding: 0 18px;
   border-radius: 50px;
   background: #ffffff;
   color: var(--c-blue-deep);
@@ -188,7 +189,7 @@ button {
   transition: opacity var(--t-fast);
   border: none;
   white-space: nowrap;
-  min-width: 84px;
+  min-width: 96px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -865,7 +866,7 @@ button {
 .detail-page-header-inner {
   display: flex;
   align-items: center;
-  height: 54px;
+  height: var(--header-h);
   padding: 0 var(--pad-mobile);
   gap: 8px;
   max-width: var(--max-w);
