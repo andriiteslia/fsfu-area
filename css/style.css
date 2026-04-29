@@ -328,7 +328,19 @@ button {
 .nav-btn.active {
   background: var(--c-blue-pale);
   color: var(--c-blue-main);
-  box-shadow: 0 1px 2px rgba(0, 87, 184, 0.08);
+}
+
+/* Hover feedback (web only, avoids sticky-hover on touch) */
+@media (hover: hover) {
+  .nav-btn:not(.active):hover {
+    background: rgba(0, 87, 184, 0.05);
+  }
+}
+
+/* Tap feedback for inactive pills */
+.nav-btn:not(.active):active,
+.nav-btn:not(.active).pressing {
+  background: rgba(0, 87, 184, 0.08);
 }
 
 /* Press micro-interaction — only emoji scales */
@@ -1043,7 +1055,6 @@ button {
 .detail-back-nav-btn {
   background: var(--c-blue-pale);
   color: var(--c-blue-main);
-  box-shadow: 0 1px 2px rgba(0, 87, 184, 0.08);
   position: relative;
   z-index: 1;
 }
