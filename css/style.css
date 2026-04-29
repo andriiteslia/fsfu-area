@@ -236,10 +236,10 @@ button {
 
 .bottom-nav {
   position: fixed;
-  bottom: 24px;
+  bottom: 23px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 24px);
+  width: calc(100% - 40px);
   max-width: 480px;
   height: 64px;
   z-index: 200;
@@ -334,15 +334,32 @@ button {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
-  /* Room for floating pill nav: 64px height + 20px bottom + 12px gap */
-  padding-bottom: calc(64px + 20px + var(--tg-safe-bottom) + 16px);
+  /* Room for floating pill nav: 64px height + 23px bottom + 16px gap */
+  padding-bottom: calc(64px + 23px + var(--tg-safe-bottom) + 16px);
   -webkit-overflow-scrolling: touch;
+  /* Fade content out as it passes behind the floating nav */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - 130px),
+    rgba(0, 0, 0, 0.15) calc(100% - 50px),
+    transparent calc(100% - 10px)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - 130px),
+    rgba(0, 0, 0, 0.15) calc(100% - 50px),
+    transparent calc(100% - 10px)
+  );
 }
 
 @media (min-width: 1024px) {
   .main {
-    padding-bottom: calc(64px + 20px + 16px);
+    padding-bottom: calc(64px + 23px + 16px);
     overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }
 
@@ -917,6 +934,20 @@ button {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - 130px),
+    rgba(0, 0, 0, 0.15) calc(100% - 50px),
+    transparent calc(100% - 10px)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - 130px),
+    rgba(0, 0, 0, 0.15) calc(100% - 50px),
+    transparent calc(100% - 10px)
+  );
 }
 
 /* Content wrapper */
@@ -982,10 +1013,10 @@ button {
 /* Bottom nav inside detail — same pill style, back only */
 .detail-bottom-nav {
   position: fixed;
-  bottom: 24px;
+  bottom: 23px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 24px);
+  width: calc(100% - 40px);
   max-width: 480px;
   height: 64px;
   z-index: 410;
