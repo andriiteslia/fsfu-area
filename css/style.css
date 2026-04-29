@@ -6,9 +6,9 @@
 /* ── Variables ─────────────────────────────────────────── */
 :root {
   /* Brand colours */
-  --c-blue-deep:   #002D6E;
-  --c-blue-main:   #005BBB;
-  --c-blue-light:  #1A78D8;
+  --c-blue-deep:   #1171D6;
+  --c-blue-main:   #1171D6;
+  --c-blue-light:  #1171D6;
   --c-blue-pale:   #E8F0FF;
   --c-gold:        #FFD500;
 
@@ -53,8 +53,8 @@
   --radius-sm:  8px;
 
   /* Shadows */
-  --shadow:    0 2px 16px rgba(0, 45, 110, 0.10);
-  --shadow-sm: 0 1px  6px rgba(0, 45, 110, 0.07);
+  --shadow:    0 2px 16px rgba(17, 113, 214, 0.10);
+  --shadow-sm: 0 1px  6px rgba(17, 113, 214, 0.07);
 
   /* Motion */
   --t-fast: 0.15s ease;
@@ -215,7 +215,7 @@ button {
   display: block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(0,45,110,0.2);
+  border: 2px solid rgba(17, 113, 214, 0.2);
   border-top-color: var(--c-blue-deep);
   border-radius: 50%;
   animation: btn-spin 0.7s linear infinite;
@@ -246,12 +246,10 @@ button {
   height: 64px;
   z-index: 200;
   display: flex;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: var(--c-blue-main);
   border-radius: 50px;
-  box-shadow: 0 4px 24px rgba(0, 45, 110, 0.12), 0 1px 0 rgba(255,255,255,0.8) inset;
-  border: 1px solid rgba(216, 227, 240, 0.7);
+  box-shadow: 0 4px 24px rgba(17, 113, 214, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   overflow: hidden;
   padding: 4px;
   gap: 2px;
@@ -273,15 +271,15 @@ button {
   justify-content: center;
   gap: 3px;
   padding: 6px 8px;
-  color: var(--c-text-sub);
+  color: rgba(255, 255, 255, 0.72);
   border-radius: 50px;
   transition: background var(--t-fast), color var(--t-fast), transform 0.12s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
 .nav-btn.active {
-  background: rgba(0, 91, 187, 0.10);
-  color: var(--c-blue-main);
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--c-white);
 }
 
 /* Press micro-interaction — only emoji scales */
@@ -355,11 +353,7 @@ button {
    ════════════════════════════════════════════════════════ */
 
 .page-hero {
-  background: linear-gradient(135deg,
-    var(--c-blue-deep) 0%,
-    var(--c-blue-main) 60%,
-    var(--c-blue-light) 100%
-  );
+  background: var(--c-blue-main);
   border-radius: var(--radius);
   padding: 20px 20px 22px;
   margin-bottom: 16px;
@@ -507,7 +501,7 @@ button {
 }
 
 .result-card-header {
-  background: linear-gradient(100deg, var(--c-blue-deep), var(--c-blue-main));
+  background: var(--c-blue-main);
   padding: 12px 14px;
 }
 
@@ -648,7 +642,7 @@ button {
 /* Poster placeholder */
 .event-poster-placeholder {
   width: 100%; aspect-ratio: 16 / 7;
-  background: linear-gradient(135deg, var(--c-blue-deep), var(--c-blue-light));
+  background: var(--c-blue-main);
   display: flex; align-items: center; justify-content: center;
   font-size: 38px; letter-spacing: 6px; flex-shrink: 0;
 }
@@ -919,7 +913,7 @@ button {
 
 /* Header card */
 .detail-header-card {
-  background: linear-gradient(100deg, var(--c-blue-deep), var(--c-blue-main));
+  background: var(--c-blue-main);
   border-radius: var(--radius);
   padding: 14px 16px;
 }
@@ -974,18 +968,16 @@ button {
   height: 64px;
   z-index: 410;
   display: flex;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: var(--c-blue-main);
   border-radius: 50px;
-  box-shadow: 0 4px 24px rgba(0, 45, 110, 0.12), 0 1px 0 rgba(255,255,255,0.8) inset;
-  border: 1px solid rgba(216, 227, 240, 0.7);
+  box-shadow: 0 4px 24px rgba(17, 113, 214, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 4px;
 }
 
 .detail-back-nav-btn {
-  background: rgba(0, 91, 187, 0.10);
-  color: var(--c-blue-main);
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--c-white);
 }
 
 
