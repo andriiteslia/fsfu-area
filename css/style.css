@@ -247,15 +247,14 @@ button {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 130px;
+  height: 64px;
   background: linear-gradient(
     to top,
-    var(--c-bg) 0,
-    var(--c-bg) 30px,
-    rgba(255, 255, 255, 0.7) 70px,
-    rgba(255, 255, 255, 0.3) 100px,
-    transparent 130px
+    rgba(255, 255, 255, 0.5) 0,
+    transparent 64px
   );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   pointer-events: none;
   z-index: 100;
 }
