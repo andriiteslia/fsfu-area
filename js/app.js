@@ -85,7 +85,7 @@ function initTelegram() {
 
     // Header colour
     try {
-      if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#002D6E');
+      if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#1171D6');
       if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#EFF3FB');
     } catch (e) {}
 
