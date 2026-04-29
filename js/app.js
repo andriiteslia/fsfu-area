@@ -86,7 +86,7 @@ function initTelegram() {
     // Header colour
     try {
       if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor('#0057B8');
-      if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#EFF3FB');
+      if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor('#FFFFFF');
     } catch (e) {}
 
     // Apply padding immediately based on current state
