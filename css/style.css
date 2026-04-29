@@ -73,7 +73,6 @@
 html {
   -webkit-text-size-adjust: 100%;
   background: var(--c-bg);
-  overscroll-behavior: none;
 }
 
 body {
@@ -85,7 +84,6 @@ body {
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
   min-height: 100dvh;
-  overscroll-behavior: none;
 }
 
 img   { display: block; max-width: 100%; }
