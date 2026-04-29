@@ -234,6 +234,41 @@ button {
    BOTTOM NAV  —  Floating pill, always at bottom
    ════════════════════════════════════════════════════════ */
 
+/* ════════════════════════════════════════════════════════
+   BOTTOM FADE OVERLAY
+   Sits between content (z<100) and the floating nav (z=200/410),
+   making content trail off behind the nav instead of cutting hard.
+   ════════════════════════════════════════════════════════ */
+
+#app::after,
+.detail-overlay::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 130px;
+  background: linear-gradient(
+    to top,
+    var(--c-bg) 0,
+    var(--c-bg) 30px,
+    rgba(255, 255, 255, 0.7) 70px,
+    rgba(255, 255, 255, 0.3) 100px,
+    transparent 130px
+  );
+  pointer-events: none;
+  z-index: 100;
+}
+
+.detail-overlay::after {
+  z-index: 405;
+}
+
+@media (min-width: 1024px) {
+  #app::after,
+  .detail-overlay::after { display: none; }
+}
+
 .bottom-nav {
   position: fixed;
   bottom: 23px;
@@ -337,29 +372,12 @@ button {
   /* Room for floating pill nav: 64px height + 23px bottom + 16px gap */
   padding-bottom: calc(64px + 23px + var(--tg-safe-bottom) + 16px);
   -webkit-overflow-scrolling: touch;
-  /* Fade content out as it passes behind the floating nav */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 0,
-    #000 calc(100% - 130px),
-    rgba(0, 0, 0, 0.15) calc(100% - 50px),
-    transparent calc(100% - 10px)
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    #000 0,
-    #000 calc(100% - 130px),
-    rgba(0, 0, 0, 0.15) calc(100% - 50px),
-    transparent calc(100% - 10px)
-  );
 }
 
 @media (min-width: 1024px) {
   .main {
     padding-bottom: calc(64px + 23px + 16px);
     overflow: visible;
-    -webkit-mask-image: none;
-    mask-image: none;
   }
 }
 
@@ -934,20 +952,6 @@ button {
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 0,
-    #000 calc(100% - 130px),
-    rgba(0, 0, 0, 0.15) calc(100% - 50px),
-    transparent calc(100% - 10px)
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    #000 0,
-    #000 calc(100% - 130px),
-    rgba(0, 0, 0, 0.15) calc(100% - 50px),
-    transparent calc(100% - 10px)
-  );
 }
 
 /* Content wrapper */
