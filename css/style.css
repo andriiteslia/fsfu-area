@@ -253,8 +253,6 @@ button {
     rgba(255, 255, 255, 0.5) 0,
     transparent 64px
   );
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   pointer-events: none;
   z-index: 100;
 }
@@ -278,7 +276,7 @@ button {
   height: 64px;
   z-index: 200;
   display: flex;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(30px) saturate(200%);
   -webkit-backdrop-filter: blur(30px) saturate(200%);
   border-radius: 50px;
@@ -1024,7 +1022,7 @@ button {
   height: 64px;
   z-index: 410;
   display: flex;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(30px) saturate(200%);
   -webkit-backdrop-filter: blur(30px) saturate(200%);
   border-radius: 50px;
