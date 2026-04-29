@@ -250,7 +250,7 @@ button {
   height: 64px;
   background: linear-gradient(
     to top,
-    rgba(255, 255, 255, 0.5) 0,
+    rgba(255, 255, 255, 0.6) 0,
     transparent 64px
   );
   pointer-events: none;
@@ -276,11 +276,9 @@ button {
   height: 64px;
   z-index: 200;
   display: flex;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  background: #FFFFFF;
   border-radius: 50px;
-  border: 0.5px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 87, 184, 0.12);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.10),
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
@@ -1022,11 +1020,9 @@ button {
   height: 64px;
   z-index: 410;
   display: flex;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  background: #FFFFFF;
   border-radius: 50px;
-  border: 0.5px solid rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 87, 184, 0.12);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.10),
     0 1px 0 rgba(255, 255, 255, 0.9) inset,
