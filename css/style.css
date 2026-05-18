@@ -118,7 +118,11 @@ button {
   background: var(--c-blue-deep);
   box-shadow: none;
   flex-shrink: 0;
-  transition: height 0.2s ease, padding-top 0.2s ease;
+  transition: height 0.2s ease, padding-top 0.2s ease, box-shadow 0.25s ease;
+}
+
+.header--scrolled {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
 }
 
 /* Extend header bg upward to cover safe area gap during scroll */
