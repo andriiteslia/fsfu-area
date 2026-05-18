@@ -6,9 +6,9 @@
 /* ── Variables ─────────────────────────────────────────── */
 :root {
   /* Brand colours */
-  --c-blue-deep:   #0057B8;
-  --c-blue-main:   #0057B8;
-  --c-blue-light:  #0057B8;
+  --c-blue-deep:   #004DAE;
+  --c-blue-main:   #004DAE;
+  --c-blue-light:  #004DAE;
   --c-blue-pale:   #E8F0FF;
   --c-gold:        #FFD500;
 
@@ -118,11 +118,7 @@ button {
   background: var(--c-blue-deep);
   box-shadow: none;
   flex-shrink: 0;
-  transition: height 0.2s ease, padding-top 0.2s ease, box-shadow 0.25s ease;
-}
-
-.header--scrolled {
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
+  transition: height 0.2s ease, padding-top 0.2s ease;
 }
 
 /* Extend header bg upward to cover safe area gap during scroll */
@@ -928,11 +924,6 @@ button {
   background: var(--c-blue-deep);
   padding-top: var(--app-top-pad);
   z-index: 10;
-  transition: box-shadow 0.25s ease;
-}
-
-.detail-page-header--scrolled {
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
 }
 
 .detail-page-header-inner {
