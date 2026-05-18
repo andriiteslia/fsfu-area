@@ -425,5 +425,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const verEl = document.getElementById('appVersion');
   if (verEl) verEl.textContent = 'v' + APP_VERSION;
 
+  // Header scroll shadow
+  const mainEl  = document.getElementById('main');
+  const headerEl = document.querySelector('.header');
+  if (mainEl && headerEl) {
+    mainEl.addEventListener('scroll', () => {
+      headerEl.classList.toggle('header--scrolled', mainEl.scrollTop > 4);
+    }, { passive: true });
+  }
+
   loadTabContent(state.activeTab).then(() => setLastUpdated());
 });
