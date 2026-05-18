@@ -425,16 +425,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const verEl = document.getElementById('appVersion');
   if (verEl) verEl.textContent = 'v' + APP_VERSION;
 
-  // Header shadow — #main scrolls on mobile, window scrolls on desktop
+  // Header shadow on scroll
   const mainEl   = document.getElementById('main');
   const headerEl = document.querySelector('.header');
-  if (headerEl) {
-    const onScroll = () => {
-      const scrolled = (mainEl && mainEl.scrollTop > 4) || window.scrollY > 4;
-      headerEl.classList.toggle('header--scrolled', scrolled);
-    };
-    mainEl?.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('scroll', onScroll, { passive: true });
+  if (mainEl && headerEl) {
+    mainEl.addEventListener('scroll', () => {
+      headerEl.classList.toggle('header--scrolled', mainEl.scrollTop > 4);
+    }, { passive: true });
   }
 
   loadTabContent(state.activeTab).then(() => setLastUpdated());
