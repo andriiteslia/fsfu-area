@@ -6,9 +6,9 @@
 /* ── Variables ─────────────────────────────────────────── */
 :root {
   /* Brand colours */
-  --c-blue-deep:   #004DAE;
-  --c-blue-main:   #004DAE;
-  --c-blue-light:  #004DAE;
+  --c-blue-deep:   #0057B8;
+  --c-blue-main:   #0057B8;
+  --c-blue-light:  #0057B8;
   --c-blue-pale:   #E8F0FF;
   --c-gold:        #FFD500;
 
@@ -562,7 +562,7 @@ button {
 }
 
 .result-card-header {
-  background: var(--c-blue-main);
+  background: #004DAE;
   padding: 12px 14px;
 }
 
@@ -974,7 +974,7 @@ button {
 
 /* Header card */
 .detail-header-card {
-  background: var(--c-blue-main);
+  background: #004DAE;
   border-radius: var(--radius);
   padding: 14px 16px;
 }
