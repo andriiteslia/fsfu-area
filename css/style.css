@@ -122,9 +122,7 @@ button {
 }
 
 .header--scrolled {
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.55),
-    0 1px 4px  rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
 }
 
 /* Extend header bg upward to cover safe area gap during scroll */
@@ -934,12 +932,8 @@ button {
 }
 
 .detail-page-header--scrolled {
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.55),
-    0 1px 4px  rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
 }
-
-.detail-page-header-inner {
   display: flex;
   align-items: center;
   height: var(--header-h);
