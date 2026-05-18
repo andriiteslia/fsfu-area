@@ -447,16 +447,6 @@ function openDetailOverlay(parentItem, detailConfigs) {
 
   document.body.appendChild(overlay);
   setDetailLastUpdated(overlay);
-
-  // Header shadow on scroll
-  const detailScroll = overlay.querySelector('.detail-scroll');
-  const detailHeader = overlay.querySelector('.detail-page-header');
-  if (detailScroll && detailHeader) {
-    detailScroll.addEventListener('scroll', () => {
-      detailHeader.classList.toggle('detail-page-header--scrolled', detailScroll.scrollTop > 4);
-    }, { passive: true });
-  }
-
   return overlay;
 }
 
