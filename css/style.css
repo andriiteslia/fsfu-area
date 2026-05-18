@@ -930,6 +930,13 @@ button {
   background: var(--c-blue-deep);
   padding-top: var(--app-top-pad);
   z-index: 10;
+  transition: box-shadow 0.25s ease;
+}
+
+.detail-page-header--scrolled {
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.55),
+    0 1px 4px  rgba(0, 0, 0, 0.35);
 }
 
 .detail-page-header-inner {
